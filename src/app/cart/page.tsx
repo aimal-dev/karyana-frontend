@@ -19,7 +19,7 @@ export default function CartPage() {
         <div className="size-24 rounded-full bg-muted/50 border border-border flex items-center justify-center mb-8 shadow-inner">
            <ShoppingBag className="size-10 text-muted-foreground opacity-30" />
         </div>
-        <h2 className="text-3xl font-black tracking-tighter mb-2 uppercase font-rajdhani">YOUR BAG IS EMPTY</h2>
+        <h2 className="text-3xl font-black tracking-tighter mb-2 uppercase font-subheading">YOUR BAG IS EMPTY</h2>
         <p className="text-muted-foreground font-black text-[10px] uppercase tracking-widest mb-8 text-center max-w-xs opacity-70">Looks like you haven&apos;t added any products to your bag yet.</p>
         <Link href="/shop">
           <Button size="lg" className="h-12 px-10 gap-3 group font-black tracking-[0.2em] text-[10px] rounded-xl uppercase">
@@ -37,7 +37,7 @@ export default function CartPage() {
           
           {/* Items List */}
           <div className="flex-1 space-y-8">
-             <div className="flex justify-between items-end border-b border-border pb-6 font-rajdhani">
+             <div className="flex justify-between items-end border-b border-border pb-6 font-subheading">
                 <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">MY <span className="text-primary italic">BAG ({items.length})</span></h1>
                 <button 
                   onClick={clearCart}
@@ -56,7 +56,7 @@ export default function CartPage() {
                      
                      <div className="flex-1 space-y-1 text-center md:text-left">
                         <p className="text-primary font-black text-[8px] uppercase tracking-[0.2em]">STAPLES • PREMIUM</p>
-                        <h3 className="font-black text-lg md:text-xl leading-tight uppercase font-rajdhani">{item.title}</h3>
+                        <h3 className="font-black text-lg md:text-xl leading-tight uppercase font-subheading">{item.title}</h3>
                         <p className="text-muted-foreground text-[10px] font-medium uppercase tracking-widest">In Stock • Ready to dispatch</p>
                         <div className="flex items-center justify-center md:justify-start gap-4 pt-1">
                            <span className="text-primary font-black text-xl tracking-tighter">${item.price.toFixed(2)}</span>
@@ -74,7 +74,7 @@ export default function CartPage() {
 
                      <div className="w-full md:w-32 text-center md:text-right space-y-1">
                         <p className="text-muted-foreground text-[8px] font-black uppercase tracking-[0.2em]">Total</p>
-                        <p className="font-black text-xl tracking-tighter font-rajdhani text-primary">${(item.price * item.qty).toFixed(2)}</p>
+                        <p className="font-black text-xl tracking-tighter font-subheading text-primary">${(item.price * item.qty).toFixed(2)}</p>
                      </div>
 
                      <button 
@@ -91,7 +91,7 @@ export default function CartPage() {
           {/* Summary / Sidebar */}
           <aside className="w-full lg:w-96 shrink-0">
              <div className="bg-card border border-border rounded-[2.5rem] p-10 space-y-10 sticky top-32 shadow-sm">
-                <div className="space-y-4 font-rajdhani">
+                <div className="space-y-4 font-subheading">
                    <h2 className="font-black text-3xl uppercase tracking-tighter leading-none italic">ORDER <span className="text-primary">SUMMARY</span></h2>
                    <div className="w-8 h-1 bg-primary" />
                 </div>
@@ -110,7 +110,7 @@ export default function CartPage() {
                       <span className="font-black tracking-tighter text-lg">$0.00</span>
                    </div>
                    
-                   <div className="border-t border-border pt-6 flex justify-between items-end font-rajdhani">
+                   <div className="border-t border-border pt-6 flex justify-between items-end font-subheading">
                       <span className="font-black text-2xl uppercase tracking-tighter">Total Price</span>
                       <div className="text-right">
                          <span className="block text-primary font-black text-4xl tracking-tighter leading-none">${totalPrice().toFixed(2)}</span>

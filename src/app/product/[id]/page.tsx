@@ -59,7 +59,7 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
                  {[...Array(5)].map((_, i) => <Star key={i} className="size-3.5 fill-current" />)}
                  <span className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] ml-2">(128 Reviews)</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-none uppercase font-rajdhani">{product.title}</h1>
+              <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-none uppercase font-subheading">{product.title}</h1>
               <div className="flex items-center gap-4 pt-2">
                  <span className="text-primary font-black text-4xl tracking-tighter">${product.price.toFixed(2)}</span>
                  <span className="text-muted-foreground line-through text-lg font-black opacity-50 tracking-tighter">${(product.price * 1.2).toFixed(2)}</span>
@@ -130,7 +130,7 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
             </div>
            
             <div className="max-w-4xl space-y-6">
-              <h3 className="font-black text-2xl tracking-tighter uppercase font-rajdhani">Pure Organic Excellence</h3>
+              <h3 className="font-black text-2xl tracking-tighter uppercase font-subheading">Pure Organic Excellence</h3>
               <p className="text-muted-foreground leading-relaxed text-sm font-medium uppercase tracking-wide">
                  Our {product.title} is sourced strictly from artisanal farms that follow zero-chemical protocols. We believe in providing you with food that is not just a commodity, but a medicine for the body. Every package is sealed with freshness and checked for quality by our expert selectors.
               </p>
