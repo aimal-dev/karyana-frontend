@@ -21,8 +21,8 @@ export default function TestimonialSection() {
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-16 space-y-2 font-subheading">
-          <h2 className="text-primary font-black tracking-[0.2em] uppercase text-[10px]">Testimonials</h2>
-          <h3 className="text-3xl font-black tracking-tighter uppercase">CLIENTS <span className="text-primary italic">FEEDBACKS</span></h3>
+          <h2 className="text-primary font-black font-medium letter-spacing-[0.5em] tracking-[0.2em] uppercase text-[14px] font-subheading">Testimonials</h2>
+          <h3 className="text-5xl font-black tracking-tighter uppercase font-subheading-main">CLIENTS <span className="text-primary font-subheading-main">FEEDBACKS</span></h3>
           <div className="w-10 h-1 bg-primary mx-auto mt-4" />
         </div>
 
@@ -30,7 +30,7 @@ export default function TestimonialSection() {
           {testimonials.map((item, i) => (
             <div key={i} className="bg-card border border-border p-8 rounded-3xl relative overflow-hidden group shadow-sm transition-all hover:shadow-xl hover:border-primary/20">
               <div className="relative z-10 space-y-6">
-                <p className="text-sm md:text-md text-muted-foreground font-medium leading-relaxed italic pr-12">
+                <p className="text-sm md:text-lg text-muted-foreground font-medium leading-relaxed italic pr-12 font-body">
                   &ldquo;{item.content}&rdquo;
                 </p>
 
@@ -39,8 +39,8 @@ export default function TestimonialSection() {
                     <Image src={item.avatar} alt={item.name} fill className="object-cover" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-black text-sm tracking-tight">{item.name}</h4>
-                    <p className="text-primary font-black text-[9px] uppercase tracking-widest">{item.role}</p>
+                    <h4 className="font-black text-lg font-medium tracking-tight">{item.name}</h4>
+                    <p className="text-primary font-black text-[11px] uppercase tracking-widest">{item.role}</p>
                   </div>
                   <Quote className="size-8 text-primary/10 group-hover:text-primary/20 transition-colors" />
                 </div>

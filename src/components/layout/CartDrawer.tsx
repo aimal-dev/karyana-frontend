@@ -35,7 +35,7 @@ export default function CartDrawer() {
             <div className="flex items-center justify-between p-6 border-b border-border">
               <div className="flex items-center gap-2">
                 <ShoppingCart className="size-5 text-primary" />
-                <h2 className="text-xl font-black uppercase tracking-tighter">Your Cart</h2>
+                <h2 className="text-xl font-medium uppercase tracking-tighter">Your Cart</h2>
                 <span className="bg-primary/10 text-primary text-[10px] font-black px-2 py-0.5 rounded-full ml-2">
                   {items.length} ITEMS
                 </span>
@@ -73,7 +73,7 @@ export default function CartDrawer() {
                       <div className="flex justify-between gap-2">
                         <div>
                           <h4 className="font-bold text-sm hover:text-primary transition-colors line-clamp-1">{item.title}</h4>
-                          <p className="text-primary font-black text-sm">${item.price.toFixed(2)}</p>
+                          <p className="text-primary font-black text-sm">RS {item.price.toFixed(2)}</p>
                         </div>
                         <Button 
                           variant="ghost" 
@@ -117,7 +117,7 @@ export default function CartDrawer() {
               <div className="p-6 border-t border-border bg-muted/30 space-y-4">
                 <div className="flex items-center justify-between text-lg">
                   <span className="font-medium text-muted-foreground uppercase text-xs tracking-widest">Total Amount</span>
-                  <span className="font-black text-2xl tracking-tighter text-primary">${totalPrice().toFixed(2)}</span>
+                  <span className="font-black text-2xl tracking-tighter text-primary">RS {totalPrice().toFixed(2)}</span>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">

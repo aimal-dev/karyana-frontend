@@ -25,9 +25,9 @@ export default function VideoSection() {
 
           <div className="absolute inset-x-0 bottom-0 p-8 md:p-12 bg-gradient-to-t from-black via-black/40 to-transparent">
              <div className="space-y-2 max-w-2xl">
-                <h4 className="text-primary font-black tracking-[0.4em] uppercase text-[10px] font-subheading">ORGANIC FARMING</h4>
-                <h3 className="text-2xl md:text-4xl font-black text-white tracking-tighter leading-tight uppercase">
-                  HOW WE GROW & HARVEST YOUR <span className="text-primary italic">FAVORITE VEGETABLES</span>
+                <h4 className="text-primary font-black font-medium tracking-[0.4em] uppercase text-[14px] font-subheading">ORGANIC FARMING</h4>
+                <h3 className="text-2xl md:text-5xl font-black text-white tracking-tighter leading-tight uppercase font-subheading-main">
+                  HOW WE GROW & HARVEST YOUR <span className="text-primary italic font-subheading-main">FAVORITE VEGETABLES</span>
                 </h3>
              </div>
           </div>

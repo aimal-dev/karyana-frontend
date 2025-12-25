@@ -7,9 +7,10 @@
 @theme {
   --font-heading: var(--font-heading);
   --font-subheading: var(--font-subheading);
+  --font-subheading-main: var(--font-subheading-main);
   --font-body: var(--font-body);
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  
+
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
@@ -45,23 +46,49 @@
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
   @keyframes accordion-down {
-    from { height: 0 }
-    to { height: var(--radix-accordion-content-height) }
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
   }
   @keyframes accordion-up {
-    from { height: var(--radix-accordion-content-height) }
-    to { height: 0 }
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
   }
-  @keyframes marquee {
-    from { transform: translateX(0) }
-    to { transform: translateX(-50%) }
+  @keyframes marquee-slow {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
   @keyframes bounce-slow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
-  --animate-marquee: marquee 30s linear infinite;
-  --animate-bounce-slow: bounce-slow 4s ease-in-out infinite;
+  --animate-marquee-slow: marquee-slow 40s linear infinite;
+  --animate-spin-slow: spin-slow 20s linear infinite;
+  --animate-bounce-slow: bounce-slow 3s ease-in-out infinite;
 }
 
 :root {
@@ -71,29 +98,29 @@
 
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
- 
+
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
- 
+
   --primary: 142 76% 36%; /* Leafy Green (#16A34A) */
   --primary-foreground: 355.7 100% 97.3%;
- 
+
   --secondary: 142 76% 96%; /* Ultra Light Green */
   --secondary-foreground: 142 76% 15%;
- 
+
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
- 
+
   --accent: 47 95% 55%; /* Sun Yellow */
   --accent-foreground: 222.2 47.4% 11.2%;
- 
+
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
- 
+
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
   --ring: 142 76% 36%;
- 
+
   --radius: 1rem;
 }
 
@@ -104,25 +131,25 @@
 
   --card: 144 40% 6%;
   --card-foreground: 140 20% 98%;
- 
+
   --popover: 144 40% 6%;
   --popover-foreground: 140 20% 98%;
- 
+
   --primary: 142 76% 36%;
   --primary-foreground: 144 60% 98%;
- 
+
   --secondary: 144 30% 15%;
   --secondary-foreground: 144 60% 98%;
- 
+
   --muted: 144 30% 15%;
   --muted-foreground: 140 10% 60%;
- 
+
   --accent: 47 95% 55%;
   --accent-foreground: 144 60% 3%;
- 
+
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 140 20% 98%;
- 
+
   --border: 144 30% 15%;
   --input: 144 30% 15%;
   --ring: 142 76% 36%;
@@ -136,16 +163,22 @@
   body {
     @apply bg-background text-foreground transition-colors duration-500 font-body;
   }
-  
+
   /* Typography Refinements - Premium Editorial Look */
-  h1, h3 { 
-    @apply font-heading tracking-tight leading-[0.9] uppercase; 
+  h1,
+  h3 {
+    @apply font-heading tracking-tight leading-[0.9] uppercase;
   }
-  h2, h4 { 
+  h2,
+  h4 {
     @apply font-subheading font-bold tracking-tight uppercase leading-tight;
   }
-  p, span, div, button, input { 
-    @apply font-body antialiased; 
+  p,
+  span,
+  div,
+  button,
+  input {
+    @apply font-body antialiased;
   }
 }
 
