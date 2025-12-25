@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import Honey from '../../../public/honey.svg'
 
 export default function DealSection() {
   const [timeLeft, setTimeLeft] = useState({
@@ -44,22 +45,22 @@ export default function DealSection() {
           <div className="relative group flex justify-center">
              <div className="relative aspect-square w-full max-w-md">
                 <Image 
-                  src="https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?q=80&w=800&auto=format&fit=crop" 
+                  src={Honey} 
                   alt="Deal Product" 
                   fill
-                  className="object-contain drop-shadow-2xl transition-transform duration-700 group-hover:scale-105"
+                  className="object-contain"
                 />
              </div>
           </div>
 
           <div className="space-y-8 text-center lg:text-left">
             <div className="space-y-4">
-              <h2 className="text-primary font-black tracking-[0.2em] uppercase text-[10px] flex items-center gap-2 justify-center lg:justify-start">
-                 <span className="w-8 h-px bg-primary" /> {/* Todays Hot Deals */}
+              <h2 className="text-primary font-medium font-black tracking-[0.2em] uppercase text-[16px] flex items-center gap-2 justify-center lg:justify-start">
+                 <span className="w-8 h-px bg-primary" /> Todays Hot Deals
               </h2>
-              <h3 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight uppercase font-subheading">
+              <h3 className="text-4xl md:text-7xl font-black tracking-tighter leading-tight uppercase font-subheading-main">
                 ORIGINAL STOCK<br />
-                <span className="text-primary italic">HONEY COMBO PACKAGE</span>
+                <span className="text-primary font-subheading-main italic">HONEY COMBO PACKAGE</span>
               </h3>
             </div>
 

@@ -61,8 +61,8 @@ export default function ProductSection({ title = "TRENDY PRODUCTS", subtitle = "
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-16 space-y-2">
-          <h2 className="text-primary font-black tracking-[0.3em] uppercase text-[10px] font-subheading">{title}</h2>
-          <h3 className="text-3xl font-black tracking-tighter uppercase">{subtitle}</h3>
+          <h2 className="text-primary font-semibold font-black tracking-[0.2em] uppercase text-[15px] letter-spacing-[0.5em] font-subheading">{title}</h2>
+          <h3 className="font-subheading-main text-5xl font-black tracking-tighter uppercase">{subtitle}</h3>
           <div className="w-10 h-1 bg-primary mx-auto mt-4" />
         </div>
 
@@ -104,13 +104,13 @@ export default function ProductSection({ title = "TRENDY PRODUCTS", subtitle = "
                 </div>
 
                 <Link href={`/product/${product.id}`}>
-                  <h4 className="font-black text-[12px] tracking-tight hover:text-primary transition-colors line-clamp-1 uppercase leading-tight font-subheading">{product.title}</h4>
+                  <h4 className="font-black text-[12px] font-bold tracking-tight hover:text-primary transition-colors line-clamp-1 uppercase leading-tight font-subheading">{product.title}</h4>
                 </Link>
 
                 <div className="flex items-center gap-2">
-                   <span className="text-primary font-black text-sm tracking-tighter">${product.price.toFixed(2)}</span>
+                   <span className="text-primary font-black text-sm tracking-tighter">RS {product.price.toFixed(2)}</span>
                    {product.oldPrice && (
-                     <span className="text-muted-foreground text-[10px] line-through font-black opacity-50 tracking-tighter">${product.oldPrice.toFixed(2)}</span>
+                     <span className="text-muted-foreground text-[10px] line-through font-black opacity-50 tracking-tighter">RS {product.oldPrice.toFixed(2)}</span>
                    )}
                 </div>
 

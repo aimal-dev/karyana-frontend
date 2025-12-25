@@ -31,8 +31,8 @@ export default function BlogSection() {
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-16 space-y-2 font-subheading">
-          <h2 className="text-primary font-black tracking-[0.3em] uppercase text-[10px]">News & Articles</h2>
-          <h3 className="text-3xl font-black tracking-tighter uppercase">LATEST <span className="text-primary italic">FROM BLOG</span></h3>
+          <h2 className="text-primary font-black font-medium letter-spacing-[0.5em] tracking-[0.2em] uppercase text-[14px] font-subheading">News & Articles</h2>
+          <h3 className="text-5xl font-black tracking-tighter uppercase font-subheading-main">LATEST <span className="text-primary font-subheading-main">FROM BLOG</span></h3>
           <div className="w-10 h-1 bg-primary mx-auto mt-4" />
         </div>
 
@@ -52,7 +52,7 @@ export default function BlogSection() {
                   <span className="flex items-center gap-1.5"><User className="size-3 text-primary" /> BY {blog.author}</span>
                 </div>
 
-                <h4 className="text-lg font-black leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase font-subheading tracking-tight">
+                <h4 className="text-xl font-medium font-black leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase font-subheading tracking-tight">
                   {blog.title}
                 </h4>
 
