@@ -1,0 +1,304 @@
+"use client"
+
+import { useState, useEffect } from "react";
+import { X, Loader2, Upload, Plus } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import api from "@/lib/axios";
+import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import { ImageUpload } from "./ImageUpload";
+
+interface ProductModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  product?: {
+    id: number;
+    title: string;
+    description: string;
+    price: number;
+    stock: number;
+    categoryId: number;
+    image: string;
+    images?: { url: string }[];
+  } | null;
+  onSuccess: () => void;
+}
+
+export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductModalProps) {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    price: "",
+    stock: "",
+    categoryId: "",
+    image: "", // featured
+    images: [] as string[] // gallery
+  });
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ["seller-categories"],
+    queryFn: async () => {
+      const res = await api.get("/category");
+      return res.data.categories;
+    },
+    enabled: isOpen
+  });
+
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        title: product.title || "",
+        description: product.description || "",
+        price: product.price?.toString() || "",
+        stock: product.stock?.toString() || "",
+        categoryId: product.categoryId?.toString() || "",
+        image: product.image || "",
+        images: product.images?.map(img => img.url) || []
+      });
+    } else {
+      setFormData({
+        title: "",
+        description: "",
+        price: "",
+        stock: "",
+        categoryId: "",
+        image: "",
+        images: []
+      });
+    }
+  }, [product, isOpen]);
+
+  if (!isOpen) return null;
+
+  const handleAddImageUrl = () => {
+    setFormData(prev => ({ ...prev, images: [...prev.images, ""] }));
+  };
+
+  const handleImageUrlChange = (index: number, value: string) => {
+    const newImages = [...formData.images];
+    newImages[index] = value;
+    setFormData(prev => ({ ...prev, images: newImages }));
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newImages = formData.images.filter((_, i) => i !== index);
+    setFormData(prev => ({ ...prev, images: newImages }));
+  };
+
+  const setFeaturedImage = (url: string) => {
+    setFormData(prev => ({ ...prev, image: url }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (product) {
+        await api.put(`/products/${product.id}`, formData);
+      } else {
+        await api.post("/products", formData);
+      }
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error("Failed to save product", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+      
+      <div className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] shadow-2xl overflow-y-auto max-h-[90vh] animate-in fade-in zoom-in-95 duration-300">
+        <div className="p-8 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#111] z-10">
+           <div>
+              <h2 className="text-2xl font-black text-white">{product ? "Edit Product" : "Add New Product"}</h2>
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Fill in the details for your inventory</p>
+           </div>
+           <button onClick={onClose} className="size-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+              <X className="size-5 text-gray-400" />
+           </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+           <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                 <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Product Title</label>
+                 <Input 
+                   value={formData.title}
+                   onChange={e => setFormData({...formData, title: e.target.value})}
+                   placeholder="e.g. Fresh Organic Milk"
+                   className="bg-white/5 border-white/10 h-12 rounded-xl text-white"
+                   required
+                 />
+              </div>
+              <div className="space-y-2">
+                 <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Category</label>
+                 <select 
+                   value={formData.categoryId}
+                   onChange={e => setFormData({...formData, categoryId: e.target.value})}
+                   className="w-full bg-white/5 border border-white/10 h-12 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-colors appearance-none"
+                   required
+                 >
+                    <option value="" className="bg-[#111]">Select Category</option>
+                    {categoriesData?.map((cat: { id: number; name: string }) => (
+                      <option key={cat.id} value={cat.id} className="bg-[#111]">{cat.name}</option>
+                    ))}
+                 </select>
+              </div>
+           </div>
+
+           <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Description</label>
+              <textarea 
+                value={formData.description}
+                onChange={e => setFormData({...formData, description: e.target.value})}
+                className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-colors min-h-[100px]"
+                placeholder="Describe your product..."
+                required
+              />
+           </div>
+
+           <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                 <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Price ($)</label>
+                 <Input 
+                   type="number"
+                   value={formData.price}
+                   onChange={e => setFormData({...formData, price: e.target.value})}
+                   placeholder="0.00"
+                   className="bg-white/5 border-white/10 h-12 rounded-xl text-white"
+                   required
+                 />
+              </div>
+              <div className="space-y-2">
+                 <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Stock Quantity</label>
+                 <Input 
+                   type="number"
+                   value={formData.stock}
+                   onChange={e => setFormData({...formData, stock: e.target.value})}
+                   placeholder="0"
+                   className="bg-white/5 border-white/10 h-12 rounded-xl text-white"
+                   required
+                 />
+              </div>
+           </div>
+
+           {/* Image Section */}
+           <div className="space-y-6 pt-4 border-t border-white/5">
+              {/* Main Featured Image */}
+              <div className="space-y-3">
+                 <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Main Featured Image (Required)</label>
+                    <ImageUpload 
+                      label="Upload Main Image" 
+                      onUploadSuccess={(url) => setFormData(prev => ({ ...prev, image: url }))} 
+                      className="w-44"
+                    />
+                 </div>
+                 <div className="relative">
+                    <Upload className="absolute left-4 top-1/2 -translate-y-1/2 size-3.5 text-gray-500" />
+                    <Input 
+                      value={formData.image}
+                      onChange={e => setFormData({...formData, image: e.target.value})}
+                      placeholder="Paste Image URL or use Upload button"
+                      className="bg-white/5 border-white/10 h-11 rounded-xl text-white pl-12 text-xs"
+                      required
+                    />
+                 </div>
+              </div>
+
+              {/* Gallery Section */}
+              <div className="space-y-4">
+                 <div className="flex items-center justify-between">
+                   <div className="flex flex-col">
+                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Product Gallery</label>
+                      <span className="text-[8px] text-gray-600 ml-1">Add more pictures of your product</span>
+                   </div>
+                   <div className="flex items-center gap-3">
+                     <ImageUpload 
+                       label="Add to Gallery" 
+                       onUploadSuccess={(url) => {
+                         setFormData(prev => {
+                           const newImages = [...prev.images, url];
+                           const newMain = prev.image === "" ? url : prev.image;
+                           return { ...prev, images: newImages, image: newMain };
+                         });
+                       }} 
+                       className="w-40"
+                     />
+                     <button type="button" onClick={handleAddImageUrl} className="size-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors border border-white/10">
+                       <Plus className="size-4 text-primary" />
+                     </button>
+                   </div>
+                 </div>
+                 
+                 <div className="grid grid-cols-1 gap-3">
+                    {formData.images.map((url, index) => (
+                      <div key={index} className="flex gap-3">
+                         <div className="relative flex-1 group">
+                            <Input 
+                              value={url}
+                              onChange={e => handleImageUrlChange(index, e.target.value)}
+                              placeholder="Image URL"
+                              className="bg-white/5 border-white/10 h-12 rounded-xl text-white pl-4 pr-32 text-xs"
+                            />
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                               {formData.image === url ? (
+                                 <span className="px-3 py-1 bg-primary text-white rounded-lg text-[8px] font-black uppercase tracking-widest leading-none">
+                                   Featured
+                                 </span>
+                               ) : (
+                                 <button 
+                                   type="button" 
+                                   onClick={() => setFeaturedImage(url)}
+                                   className="px-3 py-1 bg-white/5 text-gray-400 hover:text-white border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all"
+                                 >
+                                    Set Main
+                                 </button>
+                               )}
+                            </div>
+                         </div>
+                         <button 
+                           type="button" 
+                           onClick={() => handleRemoveImage(index)}
+                           className="size-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center hover:bg-red-500 text-red-500 hover:text-white transition-all shadow-sm"
+                         >
+                            <X className="size-4" />
+                         </button>
+                      </div>
+                    ))}
+                    {formData.images.length === 0 && (
+                      <div className="text-center py-8 border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.02]">
+                         <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest">Gallery is Empty</p>
+                      </div>
+                    )}
+                 </div>
+              </div>
+           </div>
+
+           <div className="pt-4 flex gap-4">
+              <Button 
+                type="submit" 
+                disabled={loading}
+                className="flex-1 h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+              >
+                 {loading ? <Loader2 className="size-5 animate-spin" /> : (product ? "Save Changes" : "Create Product")}
+              </Button>
+              <Button 
+                type="button" 
+                onClick={onClose}
+                className="px-10 h-14 rounded-2xl bg-white/5 border border-white/5 text-gray-400 font-black uppercase tracking-widest hover:bg-white/10 transition-all text-xs"
+              >
+                 Cancel
+              </Button>
+           </div>
+        </form>
+      </div>
+    </div>
+  );
+}
