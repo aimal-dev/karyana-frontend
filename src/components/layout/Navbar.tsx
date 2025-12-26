@@ -1,13 +1,17 @@
 "use client"
 
+import { useState } from "react";
 import Link from "next/link";
-import { ShoppingCart, User, Search, Menu, Heart, LogOut, Loader2, Bell } from "lucide-react";
+import { ShoppingCart, User, Search, Menu, Heart, LogOut, Loader2, Bell, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
 import { ThemeToggle } from "./ThemeToggle";
 import CartDrawer from "./CartDrawer";
 import { useUser } from "@/hooks/useUser";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +35,16 @@ interface Notification {
 
 export default function Navbar() {
   const { items, setOpen } = useCartStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const cartCount = items.reduce((acc, item) => acc + item.qty, 0);
+
+  const { data: settingsData } = useQuery({
+    queryKey: ["store-settings"],
+    queryFn: async () => (await api.get("/admin/settings")).data
+  });
+
+  const logoUrl = settingsData?.settings?.logoUrl;
+  const storeName = settingsData?.settings?.storeName || "KARYANA STORE";
 
   return (
     <>
@@ -39,11 +52,15 @@ export default function Navbar() {
         <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="size-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-black text-xl shadow-lg shadow-primary/20">
-              K
-            </div>
-            <span className="text-xl md:text-2xl font-black tracking-tighter hidden sm:block">
-              KARYANA <span className="text-primary italic">STORE</span>
+            {logoUrl ? (
+              <img src={logoUrl} className="h-10 w-auto object-contain" alt={storeName} />
+            ) : (
+              <div className="size-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-black text-xl shadow-lg shadow-primary/20">
+                {storeName.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <span className="text-xl md:text-2xl font-black tracking-tighter hidden sm:block uppercase">
+              {storeName.split(" ")[0]} <span className="text-primary italic">{storeName.split(" ")[1] || ""}</span>
             </span>
           </Link>
 
@@ -52,7 +69,7 @@ export default function Navbar() {
             <Link href="/" className="text-[14px] font-bold font-black tracking-[0.2em] hover:text-primary transition-colors uppercase">HOME</Link>
             <Link href="/shop" className="text-[14px] font-bold font-black tracking-[0.2em] hover:text-primary transition-colors uppercase">SHOP</Link>
             <Link href="/about" className="text-[14px] font-bold font-black tracking-[0.2em] hover:text-primary transition-colors uppercase">ABOUT</Link>
-            <Link href="/blog" className="text-[14px] font-bold font-black tracking-[0.2em] hover:text-primary transition-colors uppercase">BLOG</Link>
+
             <Link href="/contact" className="text-[14px] font-bold font-black tracking-[0.2em] hover:text-primary transition-colors uppercase">CONTACT</Link>
           </div>
 
@@ -61,13 +78,9 @@ export default function Navbar() {
             {/* <ThemeToggle /> */}
             <NotificationsMenu />
             
-            <Button variant="ghost" size="icon" className="hidden sm:flex hover:text-primary rounded-full">
-              <Search className="size-5" />
-            </Button>
+            <SearchMenu />
             
-            <Button variant="ghost" size="icon" className="hidden sm:flex hover:text-primary rounded-full">
-              <Heart className="size-5" />
-            </Button>
+            <WishlistButton />
             
             <UserMenu />
 
@@ -85,12 +98,65 @@ export default function Navbar() {
               )}
             </Button>
 
-            <Button variant="ghost" size="icon" className="lg:hidden">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="lg:hidden"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
               <Menu className="size-6" />
             </Button>
           </div>
         </div>
       </nav>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+            />
+            <motion.div 
+               initial={{ x: "100%" }}
+               animate={{ x: 0 }}
+               exit={{ x: "100%" }}
+               transition={{ type: "spring", damping: 25, stiffness: 200 }}
+               className="fixed inset-y-0 right-0 z-50 w-full max-w-xs bg-background shadow-2xl p-6 lg:hidden flex flex-col"
+            >
+              <div className="flex items-center justify-between mb-8">
+                 <span className="text-xl font-black uppercase tracking-tighter">Menu</span>
+                 <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="rounded-full">
+                    <X className="size-6" />
+                 </Button>
+              </div>
+
+              <div className="flex flex-col gap-6">
+                 {[
+                   { label: "Home", href: "/" },
+                   { label: "Shop", href: "/shop" },
+                   { label: "About", href: "/about" },
+                   { label: "Contact", href: "/contact" },
+                 ].map((link) => (
+                   <Link 
+                     key={link.href}
+                     href={link.href}
+                     onClick={() => setIsMobileMenuOpen(false)}
+                     className="text-2xl font-black uppercase tracking-wider hover:text-primary transition-colors"
+                   >
+                     {link.label}
+                   </Link>
+                 ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       <CartDrawer />
     </>
   );
@@ -227,5 +293,115 @@ function NotificationsMenu() {
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+function SearchMenu() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // Debounce search query
+  const { data: suggestions, isLoading } = useQuery({
+     queryKey: ["search-suggestions", query],
+     queryFn: async () => {
+        if (!query.trim()) return [];
+        const res = await api.get(`/products/suggestions?search=${encodeURIComponent(query)}`);
+        return res.data.suggestions;
+     },
+     enabled: query.length > 2,
+     staleTime: 1000 * 60
+  });
+
+  const handleSearch = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    setIsOpen(false);
+    if (query.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(query)}`);
+    }
+  };
+
+  return (
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="hidden sm:flex hover:text-primary rounded-full">
+          <Search className="size-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-96 p-0 rounded-2xl bg-card/95 backdrop-blur-md border border-border overflow-hidden">
+         <div className="p-4 border-b border-border">
+           <form onSubmit={handleSearch} className="relative">
+              <Input 
+                 value={query}
+                 onChange={(e) => setQuery(e.target.value)}
+                 placeholder="Search products..." 
+                 className="pr-10 h-10 bg-muted/50 border-border rounded-xl text-sm font-medium" 
+                 autoFocus
+              />
+              <Button size="icon" type="submit" variant="ghost" className="absolute right-0 top-0 h-10 w-10 hover:bg-transparent text-muted-foreground hover:text-primary">
+                 <Search className="size-4" />
+              </Button>
+           </form>
+         </div>
+         
+         {isLoading && query.length > 2 && (
+             <div className="py-8 text-center">
+                 <Loader2 className="size-4 animate-spin mx-auto text-primary" />
+                 <p className="text-[10px] uppercase font-bold text-muted-foreground mt-2 tracking-widest">Searching...</p>
+             </div>
+         )}
+
+         {!isLoading && suggestions && suggestions.length === 0 && query.length > 2 && (
+             <div className="py-8 text-center px-4">
+                 <p className="text-sm font-bold text-foreground">No matches found</p>
+                 <p className="text-[10px] text-muted-foreground mt-1">Press Enter to search broadly</p>
+             </div>
+         )}
+         
+         {suggestions && suggestions.length > 0 && (
+            <div className="py-2">
+               <p className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Suggestions</p>
+               {suggestions.map((product: any) => (
+                  <Link 
+                    key={product.id} 
+                    href={`/product/${product.id}`} 
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors"
+                  >
+                     <div className="size-10 rounded-lg bg-muted border border-border overflow-hidden flex-shrink-0 relative">
+                        {product.image ? (
+                           <img src={product.image} className="object-cover w-full h-full" alt="" />
+                        ) : (
+                           <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">?</div>
+                        )}
+                     </div>
+                     <div>
+                        <p className="text-sm font-bold text-foreground leading-tight">{product.title}</p>
+                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">{product.category.name}</p>
+                     </div>
+                  </Link>
+               ))}
+            </div>
+         )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function WishlistButton() {
+  const { items } = useWishlistStore();
+  const count = items.length;
+
+  return (
+    <Link href="/wishlist">
+       <Button variant="ghost" size="icon" className="hidden sm:flex hover:text-primary rounded-full relative">
+         <Heart className="size-5" />
+         {count > 0 && (
+           <Badge className="absolute -top-1 -right-1 size-5 flex items-center justify-center p-0 text-[10px] font-black pointer-events-none">
+             {count}
+           </Badge>
+         )}
+       </Button>
+    </Link>
   );
 }

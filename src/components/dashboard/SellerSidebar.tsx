@@ -13,7 +13,8 @@ import {
   UserCircle,
   LogOut,
   Bell,
-  MessageSquare
+  MessageSquare,
+  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
@@ -72,7 +73,7 @@ const sellerSidebarItems = [
   },
 ];
 
-export function SellerSidebar() {
+export function SellerSidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -85,8 +86,15 @@ export function SellerSidebar() {
   };
 
   return (
-    <aside className="w-72 bg-[#0A0A0B] border-r border-white/5 min-h-screen flex flex-col sticky top-0">
-      <div className="p-8">
+    <aside className="w-72 bg-[#0A0A0B] border-r border-white/5 min-h-screen flex flex-col sticky top-0 h-screen overflow-y-auto">
+      <div className="p-8 relative">
+        <button 
+          onClick={onClose}
+          className="lg:hidden absolute top-4 right-4 p-2 text-gray-400 hover:text-white"
+        >
+          <X className="size-6" />
+        </button>
+
         <div className="flex items-center gap-3 mb-10">
            <div className="size-10 bg-primary rounded-xl flex items-center justify-center font-black text-white text-xl shadow-lg shadow-primary/20">
              K
@@ -102,6 +110,7 @@ export function SellerSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={cn(
                 "flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl transition-all duration-300 group relative overflow-hidden",
                 pathname === item.href 

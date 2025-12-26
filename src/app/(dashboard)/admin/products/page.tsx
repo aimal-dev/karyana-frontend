@@ -8,9 +8,12 @@ import {
   Trash2, 
   Loader2,
   Store,
-  ExternalLink
+  ExternalLink,
+  Plus
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ProductModal } from "@/components/dashboard/ProductModal";
+import { useState } from "react";
 
 export default function AdminProductsPage() {
   const { toast } = useToast();
@@ -34,6 +37,27 @@ export default function AdminProductsPage() {
     }
   });
 
+  interface Product {
+    id: number;
+    title: string;
+    description: string;
+    price: number;
+    stock: number;
+    categoryId: number;
+    image: string;
+    isFeatured?: boolean;
+    isTrending?: boolean;
+    isOnSale?: boolean;
+    oldPrice?: number;
+    tags?: string[];
+    seller: { id: number; name: string };
+    category?: { name: string };
+    images?: { url: string }[];
+  }
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
   if (isLoading) {
     return (
       <div className="h-[60vh] flex items-center justify-center">
@@ -46,9 +70,21 @@ export default function AdminProductsPage() {
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div>
-         <h1 className="text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">Global Inventory</h1>
-         <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Monitor and manage all products across all sellers</p>
+      <div className="flex items-center justify-between">
+         <div>
+            <h1 className="text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">Global Inventory</h1>
+            <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Monitor and manage all products across all sellers</p>
+         </div>
+         <button 
+           onClick={() => {
+             setSelectedProduct(null);
+             setIsModalOpen(true);
+           }}
+           className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+         >
+            <Plus className="size-4" />
+            Add Product
+         </button>
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-[2.5rem] p-8">
@@ -75,16 +111,9 @@ export default function AdminProductsPage() {
                   </tr>
                </thead>
                <tbody className="divide-y divide-white/5">
-                  {products.map((p: {
-                    id: number;
-                    image: string;
-                    title: string;
-                    price: number;
-                    seller: { name: string };
-                    category?: { name: string };
-                    stock: number;
-                  }) => (
+                  {products.map((p: Product) => (
                     <tr key={p.id} className="group hover:bg-white/[0.02] transition-colors">
+                       {/* ... table content same but adding onClick to Edit button ... */}
                        <td className="py-6 px-4">
                           <div className="flex items-center gap-4">
                              <div className="relative size-12 rounded-xl bg-white/5 border border-white/5 overflow-hidden">
@@ -95,8 +124,21 @@ export default function AdminProductsPage() {
                                 )}
                              </div>
                              <div>
-                                <p className="text-sm font-bold text-white">{p.title}</p>
-                                <p className="text-xs font-medium text-indigo-400 mt-1">${p.price.toFixed(2)}</p>
+                                <div className="flex items-center gap-2">
+                                   <p className="text-sm font-bold text-white leading-tight">{p.title}</p>
+                                   <div className="flex gap-1">
+                                      {p.isFeatured && (
+                                        <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Featured</span>
+                                      )}
+                                      {p.isTrending && (
+                                        <span className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Trending</span>
+                                      )}
+                                      {p.isOnSale && (
+                                        <span className="bg-red-500/10 border border-red-500/20 text-red-500 text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Sale</span>
+                                      )}
+                                   </div>
+                                </div>
+                                <p className="text-xs font-medium text-emerald-400 mt-1">${p.price.toFixed(2)}</p>
                              </div>
                           </div>
                        </td>
@@ -114,7 +156,13 @@ export default function AdminProductsPage() {
                        </td>
                        <td className="py-6 px-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                             <button className="size-9 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                             <button 
+                               onClick={() => {
+                                 setSelectedProduct(p);
+                                 setIsModalOpen(true);
+                               }}
+                               className="size-9 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                             >
                                 <ExternalLink className="size-4 text-gray-500" />
                              </button>
                              <button 
@@ -135,6 +183,19 @@ export default function AdminProductsPage() {
             </table>
          </div>
       </div>
+
+      <ProductModal 
+        isOpen={isModalOpen} 
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedProduct(null);
+        }} 
+        product={selectedProduct}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ["admin-all-products"] });
+          toast({ variant: "success", title: "Global Inventory Updated", description: "Your changes have been reflected across the platform." });
+        }}
+      />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import api from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { ImageUpload } from "./ImageUpload";
+import { useUser } from "@/hooks/useUser";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -20,7 +21,13 @@ interface ProductModalProps {
     stock: number;
     categoryId: number;
     image: string;
+    isFeatured?: boolean;
+    isTrending?: boolean;
+    isOnSale?: boolean;
+    oldPrice?: number;
+    sellerId?: number;
     images?: { url: string }[];
+    tags?: string[];
   } | null;
   onSuccess: () => void;
 }
@@ -34,8 +41,17 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
     stock: "",
     categoryId: "",
     image: "", // featured
-    images: [] as string[] // gallery
+    images: [] as string[], // gallery
+    isFeatured: false,
+    isTrending: false,
+    isOnSale: false,
+    oldPrice: "",
+    tags: "",
+    sellerId: ""
   });
+
+  const { data: user } = useUser();
+  const isAdmin = user?.role === "ADMIN";
 
   const { data: categoriesData } = useQuery({
     queryKey: ["seller-categories"],
@@ -44,6 +60,15 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
       return res.data.categories;
     },
     enabled: isOpen
+  });
+
+  const { data: sellersData } = useQuery({
+    queryKey: ["admin-sellers-list"],
+    queryFn: async () => {
+      const res = await api.get("/admin/sellers?approved=true");
+      return res.data.sellers;
+    },
+    enabled: isOpen && isAdmin
   });
 
   useEffect(() => {
@@ -55,7 +80,13 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
         stock: product.stock?.toString() || "",
         categoryId: product.categoryId?.toString() || "",
         image: product.image || "",
-        images: product.images?.map(img => img.url) || []
+        images: product.images?.map(img => img.url) || [],
+        isFeatured: product.isFeatured || false,
+        isTrending: product.isTrending || false,
+        isOnSale: product.isOnSale || false,
+        oldPrice: product.oldPrice?.toString() || "",
+        tags: product.tags ? product.tags.join(", ") : "",
+        sellerId: product.sellerId?.toString() || ""
       });
     } else {
       setFormData({
@@ -65,7 +96,13 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
         stock: "",
         categoryId: "",
         image: "",
-        images: []
+        images: [],
+        isFeatured: false,
+        isTrending: false,
+        isOnSale: false,
+        oldPrice: "",
+        tags: "",
+        sellerId: ""
       });
     }
   }, [product, isOpen]);
@@ -94,11 +131,21 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    const payload = {
+      ...formData,
+      price: Number(formData.price),
+      stock: Number(formData.stock),
+      categoryId: Number(formData.categoryId),
+      oldPrice: formData.oldPrice ? Number(formData.oldPrice) : null,
+      sellerId: isAdmin && formData.sellerId ? Number(formData.sellerId) : undefined
+    };
+
     try {
       if (product) {
-        await api.put(`/products/${product.id}`, formData);
+        await api.put(`/products/${product.id}`, payload);
       } else {
-        await api.post("/products", formData);
+        await api.post("/products", payload);
       }
       onSuccess();
       onClose();
@@ -116,7 +163,7 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
       <div className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] shadow-2xl overflow-y-auto max-h-[90vh] animate-in fade-in zoom-in-95 duration-300">
         <div className="p-8 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#111] z-10">
            <div>
-              <h2 className="text-2xl font-black text-white">{product ? "Edit Product" : "Add New Product"}</h2>
+              <h2 className="text-2xl font-medium text-white">{product ? "Edit Product" : "Add New Product"}</h2>
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Fill in the details for your inventory</p>
            </div>
            <button onClick={onClose} className="size-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
@@ -150,6 +197,25 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                     ))}
                  </select>
               </div>
+
+              {isAdmin && (
+                <div className="space-y-2 col-span-2 border-t border-white/5 pt-6">
+                   <label className="text-[10px] font-black text-indigo-400 uppercase tracking-widest ml-1">Assign to Seller (Admin Only)</label>
+                   <div className="relative">
+                     <select 
+                       value={formData.sellerId}
+                       onChange={e => setFormData({...formData, sellerId: e.target.value})}
+                       className="w-full bg-indigo-500/5 border border-indigo-500/20 h-14 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-colors appearance-none font-bold shadow-inner"
+                       required={isAdmin}
+                     >
+                        <option value="" className="bg-[#111]">Select Seller</option>
+                        {sellersData?.map((s: { id: number; name: string }) => (
+                          <option key={s.id} value={s.id} className="bg-[#111]">{s.name}</option>
+                        ))}
+                     </select>
+                   </div>
+                </div>
+              )}
            </div>
 
            <div className="space-y-2">
@@ -161,6 +227,73 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                 placeholder="Describe your product..."
                 required
               />
+           </div>
+
+            <div className="space-y-2">
+               <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Product Tags (Search Keywords)</label>
+               <Input 
+                 value={formData.tags}
+                 onChange={e => setFormData({...formData, tags: e.target.value})}
+                 placeholder="e.g. juice, orange, drink, beverage (Comma separated)"
+                 className="bg-white/5 border-white/10 h-12 rounded-xl text-white"
+               />
+                <p className="text-[9px] text-gray-600 ml-1 font-medium">Add keywords like synonyms to help users find this product (e.g. &apos;ata&apos; for flour)</p>
+            </div>
+
+           {/* Product Status Toggles */}
+           <div className="space-y-4 pt-4 border-t border-white/5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Settings</label>
+              <div className="grid grid-cols-3 gap-3">
+                 <button 
+                   type="button"
+                   onClick={() => setFormData({...formData, isFeatured: !formData.isFeatured})}
+                   className={cn(
+                     "flex items-center justify-center py-3 rounded-xl border transition-all gap-2",
+                     formData.isFeatured ? "bg-amber-500/10 border-amber-500/50 text-amber-500" : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/10"
+                   )}
+                 >
+                    <div className={cn("size-1.5 rounded-full", formData.isFeatured ? "bg-amber-500 animate-pulse" : "bg-gray-600")} />
+                    <span className="text-[9px] font-black uppercase tracking-widest">Featured</span>
+                 </button>
+                 
+                 <button 
+                   type="button"
+                   onClick={() => setFormData({...formData, isTrending: !formData.isTrending})}
+                   className={cn(
+                     "flex items-center justify-center py-3 rounded-xl border transition-all gap-2",
+                     formData.isTrending ? "bg-indigo-500/10 border-indigo-500/50 text-indigo-500" : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/10"
+                   )}
+                 >
+                    <div className={cn("size-1.5 rounded-full", formData.isTrending ? "bg-indigo-500 animate-pulse" : "bg-gray-600")} />
+                    <span className="text-[9px] font-black uppercase tracking-widest">Trending</span>
+                 </button>
+
+                 <button 
+                   type="button"
+                   onClick={() => setFormData({...formData, isOnSale: !formData.isOnSale})}
+                   className={cn(
+                     "flex items-center justify-center py-3 rounded-xl border transition-all gap-2",
+                     formData.isOnSale ? "bg-red-500/10 border-red-500/50 text-red-500" : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/10"
+                   )}
+                 >
+                    <div className={cn("size-1.5 rounded-full", formData.isOnSale ? "bg-red-500 animate-pulse" : "bg-gray-600")} />
+                    <span className="text-[9px] font-black uppercase tracking-widest">Sale</span>
+                 </button>
+              </div>
+
+              {formData.isOnSale && (
+                <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-300">
+                   <label className="text-[9px] font-black text-red-500 uppercase tracking-widest ml-1">Original Price ($)</label>
+                   <Input 
+                     type="number"
+                     value={formData.oldPrice}
+                     onChange={e => setFormData({...formData, oldPrice: e.target.value})}
+                     placeholder="e.g. 199.99"
+                     className="bg-red-500/5 border-red-500/20 h-11 rounded-xl text-white focus:border-red-500/50 text-xs"
+                     required={formData.isOnSale}
+                   />
+                </div>
+              )}
            </div>
 
            <div className="grid grid-cols-2 gap-6">

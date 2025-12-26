@@ -14,7 +14,7 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 lg:px-8 py-24">
+      <div className="container mx-auto px-4 lg:px-20 py-24">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-32">
           {/* Card 1: Map/Address */}
           <div className="group bg-card border border-border rounded-3xl p-10 space-y-6 hover:shadow-xl hover:border-primary/30 transition-all text-center">

@@ -122,7 +122,7 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
   if (!product) return <div className="min-h-screen bg-background flex items-center justify-center pt-20 font-black text-4xl uppercase tracking-tighter shadow-sm">Product Not Found</div>;
 
   return (
-    <div className="min-h-screen bg-background pt-28 md:pt-32 pb-20">
+    <div className="min-h-screen bg-background pt-28 md:pt-32 pb-20 px-20">
       <div className="container mx-auto px-4 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 item-start">
           
@@ -367,7 +367,7 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
 
         {/* Related Products Section */}
         <div className="mt-32 border-t border-border pt-20">
-           <ProductSection title="Related Products" subtitle="YOU MAY ALSO LIKE" />
+           <ProductSection title="Related Products" subtitle="YOU MAY ALSO LIKE" type="trending" />
         </div>
       </div>
     </div>

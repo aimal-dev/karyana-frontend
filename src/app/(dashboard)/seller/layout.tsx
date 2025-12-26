@@ -2,11 +2,11 @@
 
 import { SellerSidebar } from "@/components/dashboard/SellerSidebar";
 import { NotificationsMenu } from "@/components/dashboard/NotificationsMenu";
-import { Search } from "lucide-react";
+import { Search, Menu } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function SellerLayout({
   children,
@@ -15,6 +15,7 @@ export default function SellerLayout({
 }) {
   const { data: user, isLoading } = useUser();
   const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && (!user || (user.role !== "SELLER" && user.role !== "ADMIN"))) {
@@ -32,27 +33,44 @@ export default function SellerLayout({
 
   return (
     <div className="flex min-h-screen bg-[#0A0A0B] text-white">
-      {/* Sidebar */}
-      <SellerSidebar />
+      {/* Mobile Sidebar Overlay */}
+      <div 
+        className={`fixed inset-0 bg-black/50 z-40 lg:hidden ${isSidebarOpen ? "block" : "hidden"}`}
+        onClick={() => setIsSidebarOpen(false)}
+      />
+
+      {/* Sidebar - Responsive */}
+      <div className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <SellerSidebar onClose={() => setIsSidebarOpen(false)} />
+      </div>
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto">
         {/* Top Navbar for Dashboard */}
-        <header className="h-20 border-b border-white/5 flex items-center justify-between px-10 sticky top-0 bg-[#0A0A0B]/80 backdrop-blur-xl z-30">
-           <div className="relative w-96 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-500 group-focus-within:text-primary transition-colors" />
-              <input 
-                type="text" 
-                placeholder="Search analytics, orders, or products..." 
-                className="w-full bg-white/5 border border-white/5 rounded-xl py-2.5 pl-12 pr-4 text-sm font-medium focus:outline-none focus:border-primary/30 focus:bg-white/[0.08] transition-all"
-              />
+        <header className="h-20 border-b border-white/5 flex items-center justify-between px-4 lg:px-10 sticky top-0 bg-[#0A0A0B]/80 backdrop-blur-xl z-30">
+           <div className="flex items-center gap-4">
+             <button 
+               className="lg:hidden p-2 text-gray-400 hover:text-white"
+               onClick={() => setIsSidebarOpen(true)}
+             >
+               <Menu className="size-6" />
+             </button>
+             
+             <div className="relative w-full max-w-sm hidden md:block group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-500 group-focus-within:text-primary transition-colors" />
+                <input 
+                  type="text" 
+                  placeholder="Search analytics, orders, or products..." 
+                  className="w-64 lg:w-96 bg-white/5 border border-white/5 rounded-xl py-2.5 pl-12 pr-4 text-sm font-medium focus:outline-none focus:border-primary/30 focus:bg-white/[0.08] transition-all"
+                />
+             </div>
            </div>
 
-           <div className="flex items-center gap-6">
+           <div className="flex items-center gap-2 lg:gap-6">
               <NotificationsMenu role="SELLER" />
               
-              <div className="flex items-center gap-4 pl-6 border-l border-white/5">
-                 <div className="flex flex-col items-end">
+              <div className="flex items-center gap-4 pl-4 lg:pl-6 lg:border-l lg:border-white/5">
+                 <div className="hidden lg:flex flex-col items-end">
                     <span className="text-sm font-bold text-white">{user?.name}</span>
                     <span className="text-[10px] font-bold text-primary uppercase tracking-tighter">{user?.role}</span>
                  </div>

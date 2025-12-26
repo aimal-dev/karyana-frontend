@@ -58,6 +58,12 @@ export default function SellerProductsPage() {
     stock: number;
     categoryId: number;
     image: string;
+    tags?: string[];
+    isFeatured?: boolean;
+    isTrending?: boolean;
+    isOnSale?: boolean;
+    oldPrice?: number;
+    images?: { url: string }[];
   }) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
@@ -146,6 +152,9 @@ export default function SellerProductsPage() {
                       categoryId: number;
                       image: string;
                       createdAt: string;
+                      isFeatured?: boolean;
+                      isTrending?: boolean;
+                      isOnSale?: boolean;
                       category?: { name: string };
                     }) => (
                       <tr key={p.id} className="group hover:bg-white/[0.02] transition-colors">
@@ -159,7 +168,20 @@ export default function SellerProductsPage() {
                                   )}
                                </div>
                                <div>
-                                  <p className="text-sm font-bold text-white leading-tight">{p.title}</p>
+                                  <div className="flex items-center gap-2">
+                                     <p className="text-sm font-bold text-white leading-tight">{p.title}</p>
+                                     <div className="flex gap-1">
+                                        {p.isFeatured && (
+                                          <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Featured</span>
+                                        )}
+                                        {p.isTrending && (
+                                          <span className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Trending</span>
+                                        )}
+                                        {p.isOnSale && (
+                                          <span className="bg-red-500/10 border border-red-500/20 text-red-500 text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter">On Sale</span>
+                                        )}
+                                     </div>
+                                  </div>
                                   <p className="text-[10px] text-gray-500 font-medium truncate max-w-[200px] mt-1">{p.description}</p>
                                </div>
                             </div>

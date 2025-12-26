@@ -1,41 +1,33 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import api from "@/lib/axios";
 
-const categories = [
-  {
-    title: "Fresh Produce",
-    desc: "Directly from the farm to your table.",
-    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop",
-    link: "/shop?category=fresh",
-  },
-  {
-    title: "Dairy & Eggs",
-    desc: "Farm fresh milk, cheese, and eggs.",
-    image: "https://images.unsplash.com/photo-1550583724-125581cc255b?q=80&w=800&auto=format&fit=crop",
-    link: "/shop?category=dairy",
-  },
-  {
-    title: "Staples & Pantry",
-    desc: "Essential grains, flours, and pulses.",
-    image: "https://images.unsplash.com/photo-1578916171728-46682e7c587a?q=80&w=800&auto=format&fit=crop",
-    link: "/shop?category=staples",
-  },
-  {
-    title: "Household Care",
-    desc: "Everything you need for a clean home.",
-    image: "https://images.unsplash.com/photo-1584622781564-1d9876a13d00?q=80&w=800&auto=format&fit=crop",
-    link: "/shop?category=household",
-  },
-  {
-    title: "Snacks & Munchies",
-    desc: "Delicious snacks for every occasion.",
-    image: "https://images.unsplash.com/photo-1599490659273-1b519d7428e7?q=80&w=800&auto=format&fit=crop",
-    link: "/shop?category=snacks",
-  }
-];
+interface Category {
+  id: number;
+  name: string;
+  image: string | null;
+}
 
 export default function CategorySection() {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await api.get("/category/all");
+        setCategories(data.categories);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (categories.length === 0) return null;
+
   return (
     <section className="py-24 bg-background relative overflow-hidden">
       <div className="container mx-auto px-4 lg:px-8">
@@ -50,18 +42,23 @@ export default function CategorySection() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {categories.map((cat, i) => (
+          {categories.map((cat) => (
             <Link 
-              key={i} 
-              href={cat.link} 
+              key={cat.id} 
+              href={`/shop?category=${cat.name}`} 
               className={`group relative block h-52 rounded-2xl overflow-hidden shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-2 border border-border`}
             >
-              <Image src={cat.image} alt={cat.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+              <Image 
+                src={cat.image || "/placeholder.png"} 
+                alt={cat.name} 
+                fill 
+                className="object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
               
               <div className="absolute inset-0 p-6 flex flex-col justify-end">
                 <div className="space-y-2 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <h4 className="text-lg font-medium font-black text-white leading-tight font-subheading uppercase">{cat.title}</h4>
+                  <h4 className="text-lg font-medium font-black text-white leading-tight font-subheading uppercase">{cat.name}</h4>
                   <p className="text-white/80 text-[8px] font-black uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity duration-500">Explore</p>
                   <div className="w-8 h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500" />
                 </div>

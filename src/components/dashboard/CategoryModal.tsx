@@ -66,7 +66,7 @@ export function CategoryModal({ isOpen, onClose, category, onSuccess }: Category
       <div className="relative w-full max-w-lg bg-[#111] border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
         <div className="p-8 border-b border-white/5 flex items-center justify-between">
            <div>
-              <h2 className="text-2xl font-black text-white">{category ? "Edit Category" : "Add New Category"}</h2>
+              <h2 className="text-2xl font-medium text-white">{category ? "Edit Category" : "Add New Category"}</h2>
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Define product categories</p>
            </div>
            <button onClick={onClose} className="size-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
