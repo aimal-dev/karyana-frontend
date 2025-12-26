@@ -14,7 +14,7 @@ import api from "@/lib/axios";
 export default function HomePage() {
   const { data: settingsData } = useQuery({
     queryKey: ["store-settings"],
-    queryFn: async () => (await api.get("/admin/settings")).data
+    queryFn: async () => (await api.get("/settings")).data
   });
 
   const limits = {
