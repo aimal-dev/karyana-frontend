@@ -58,7 +58,7 @@ export default function Navbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-1 md:gap-3">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             <NotificationsMenu />
             
             <Button variant="ghost" size="icon" className="hidden sm:flex hover:text-primary rounded-full">
