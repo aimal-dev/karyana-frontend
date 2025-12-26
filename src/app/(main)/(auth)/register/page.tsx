@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Loader2, Mail, Lock, User } from "lucide-react";
 
-export default function RegisterPage() {
+import { Suspense } from "react";
+
+function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
@@ -117,5 +119,17 @@ export default function RegisterPage() {
         </form>
       </AuthCard>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="size-10 animate-spin text-primary" />
+      </div>
+    }>
+      <RegisterContent />
+    </Suspense>
   );
 }

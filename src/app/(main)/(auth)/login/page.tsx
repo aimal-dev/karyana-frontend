@@ -14,7 +14,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/hooks/useUser";
 import { useEffect } from "react";
 
-export default function LoginPage() {
+import { Suspense } from "react";
+
+function LoginContent() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
@@ -40,7 +42,6 @@ export default function LoginPage() {
 
     try {
       const { data } = await api.post("/auth/login", formData);
-      localStorage.setItem("token", data.token);
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", "USER");
       
@@ -127,5 +128,17 @@ export default function LoginPage() {
         </form>
       </AuthCard>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="size-10 animate-spin text-primary" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
