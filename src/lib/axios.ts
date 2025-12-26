@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// Default to localhost:5000 if env var not set
+// Base URL for API calls - will use production Vercel URL if set
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const api = axios.create({
