@@ -96,6 +96,12 @@ export default function SellerLoginPage() {
             </div>
           </div>
 
+          <div className="flex justify-end pr-1">
+             <Link href="/forgot-password" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors">
+                Forgot Password?
+             </Link>
+          </div>
+
           <Button 
             disabled={loading}
             className="w-full h-14 text-sm font-black tracking-[0.2em] rounded-2xl group flex items-center justify-center gap-2"
