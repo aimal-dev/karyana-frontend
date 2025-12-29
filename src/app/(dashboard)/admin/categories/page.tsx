@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { CategoryModal } from "@/components/dashboard/CategoryModal";
+import { BulkOperations } from "@/components/dashboard/BulkOperations";
 import { useToast } from "@/hooks/use-toast";
 
 export default function AdminCategoriesPage() {
@@ -78,6 +79,14 @@ export default function AdminCategoriesPage() {
             <Plus className="size-4 md:size-5" />
             <span className="text-xs md:text-sm">Create Category</span>
          </Button>
+      </div>
+      
+      {/* Bulk Operations */}
+      <div className="flex justify-end -mt-4 sm:-mt-6">
+        <BulkOperations 
+          type="categories" 
+          onSuccess={() => queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] })} 
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">

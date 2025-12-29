@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { CategoryModal } from "@/components/dashboard/CategoryModal";
+import { BulkOperations } from "@/components/dashboard/BulkOperations";
 import { useToast } from "@/hooks/use-toast";
 
 export default function CategoriesPage() {
@@ -77,6 +78,14 @@ export default function CategoriesPage() {
             <Plus className="size-5" />
             New Category
          </Button>
+      </div>
+
+      {/* Bulk Operations */}
+      <div className="flex justify-end -mt-6">
+        <BulkOperations 
+          type="categories" 
+          onSuccess={() => queryClient.invalidateQueries({ queryKey: ["seller-categories-list"] })} 
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
