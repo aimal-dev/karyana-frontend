@@ -23,6 +23,7 @@ export default function CategoriesPage() {
     name: string;
     image: string | null;
   } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -41,6 +42,17 @@ export default function CategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["seller-categories-list"] });
       toast({ variant: "success", title: "Deleted", description: "Category removed" });
+    }
+  });
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: number[]) => {
+      await api.post("/category/delete-many", { ids });
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["seller-categories-list"] });
+      toast({ variant: "success", title: "Deleted", description: `${data?.count || 'Selected'} categories removed.` });
+      setSelectedIds([]);
     }
   });
 
@@ -81,7 +93,33 @@ export default function CategoriesPage() {
       </div>
 
       {/* Bulk Operations */}
-      <div className="flex justify-end -mt-6">
+      <div className="flex justify-end -mt-6 gap-3">
+        {selectedIds.length > 0 && (
+           <button 
+             onClick={() => {
+                if (confirm(`Delete ${selectedIds.length} categories?`)) {
+                   bulkDeleteMutation.mutate(selectedIds);
+                }
+             }}
+             disabled={bulkDeleteMutation.isPending}
+             className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 animate-in fade-in zoom-in"
+           >
+              {bulkDeleteMutation.isPending ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
+              Delete ({selectedIds.length})
+           </button>
+        )}
+        <button 
+          onClick={() => {
+             if (selectedIds.length === categories.length) {
+                setSelectedIds([]);
+             } else {
+                setSelectedIds(categories.map((c: { id: number }) => c.id));
+             }
+          }}
+          className="px-4 py-2 bg-white/5 border border-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all"
+        >
+           {selectedIds.length === categories.length ? "Deselect All" : "Select All"}
+        </button>
         <BulkOperations 
           type="categories" 
           onSuccess={() => queryClient.invalidateQueries({ queryKey: ["seller-categories-list"] })} 
@@ -96,7 +134,22 @@ export default function CategoriesPage() {
            </div>
          ) : (
            categories.map((cat: { id: number; name: string; image: string | null }) => (
-             <div key={cat.id} className="group relative bg-[#111] border border-white/5 rounded-[2.5rem] p-6 hover:border-primary/30 transition-all hover:shadow-2xl">
+             <div 
+               key={cat.id} 
+               className={`group relative bg-[#111] border rounded-[2.5rem] p-6 transition-all hover:shadow-2xl ${selectedIds.includes(cat.id) ? "border-primary/50 bg-primary/5" : "border-white/5 hover:border-primary/30"}`}
+             >
+                <div className="absolute top-6 left-6 z-10">
+                   <input 
+                     type="checkbox" 
+                     className="size-5 rounded-md border-white/20 bg-black/40 checked:bg-primary checked:border-primary transition-all cursor-pointer backdrop-blur-md"
+                     checked={selectedIds.includes(cat.id)}
+                     onChange={(e) => {
+                        if (e.target.checked) setSelectedIds([...selectedIds, cat.id]);
+                        else setSelectedIds(selectedIds.filter(id => id !== cat.id));
+                     }}
+                   />
+                </div>
+
                 <div className="aspect-[4/3] rounded-2xl bg-white/5 border border-white/5 mb-6 overflow-hidden relative flex items-center justify-center">
                    {cat.image ? (
                      <NextImage src={cat.image} fill className="object-cover transition-transform duration-500 group-hover:scale-110" alt={cat.name} unoptimized />

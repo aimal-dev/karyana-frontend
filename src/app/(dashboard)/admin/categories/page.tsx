@@ -48,7 +48,7 @@ export default function AdminCategoriesPage() {
 
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: number[]) => {
-      await api.post("/categories/delete-many", { ids });
+      await api.post("/category/delete-many", { ids });
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] });
