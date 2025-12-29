@@ -22,6 +22,7 @@ export default function AdminProductsPage() {
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const limit = 10;
 
   const { data, isLoading } = useQuery({
@@ -46,6 +47,17 @@ export default function AdminProductsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-all-products"] });
       toast({ variant: "success", title: "Deleted", description: "Product removed by admin" });
+    }
+  });
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: number[]) => {
+      await api.post("/products/delete-many", { ids });
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-all-products"] });
+      toast({ variant: "success", title: "Deleted", description: `${data?.count || 'Selected'} products removed.` });
+      setSelectedIds([]);
     }
   });
 
@@ -121,9 +133,44 @@ export default function AdminProductsPage() {
 
          <div className="overflow-x-auto -mx-4 md:mx-0">
             <div className="min-w-[800px] px-4 md:px-0">
+            {/* Selection Toolbar */}
+            {selectedIds.length > 0 && (
+               <div className="flex items-center justify-between bg-red-500/10 border border-red-500/20 px-6 py-4 rounded-2xl mb-6 animate-in fade-in slide-in-from-top-2">
+                  <span className="text-red-500 font-black uppercase tracking-widest text-xs">{selectedIds.length} Products Selected</span>
+                  <button 
+                    onClick={() => {
+                        if (confirm(`Are you sure you want to delete ${selectedIds.length} products? This cannot be undone.`)) {
+                            bulkDeleteMutation.mutate(selectedIds);
+                        }
+                    }}
+                    disabled={bulkDeleteMutation.isPending}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-red-500/20"
+                  >
+                     {bulkDeleteMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                     Delete Selected
+                  </button>
+               </div>
+            )}
+
             <table className="w-full text-left border-collapse">
                <thead>
                   <tr className="border-b border-white/5">
+                     <th className="pb-4 px-4 w-12">
+                        <div className="flex items-center justify-center p-1">
+                           <input 
+                             type="checkbox" 
+                             className="size-4 rounded border-white/20 bg-white/5 checked:bg-indigo-500 checked:border-indigo-500 transition-all cursor-pointer"
+                             checked={products.length > 0 && selectedIds.length === products.length}
+                             onChange={(e) => {
+                                if (e.target.checked) {
+                                   setSelectedIds(products.map((p: Product) => p.id));
+                                } else {
+                                   setSelectedIds([]);
+                                }
+                             }}
+                           />
+                        </div>
+                     </th>
                      <th className="pb-4 text-[10px] font-medium text-gray-500 uppercase tracking-widest px-4">Product</th>
                      <th className="pb-4 text-[10px] font-medium text-gray-500 uppercase tracking-widest px-4">Seller</th>
                      <th className="pb-4 text-[10px] font-medium text-gray-500 uppercase tracking-widest px-4">Category</th>
@@ -133,7 +180,23 @@ export default function AdminProductsPage() {
                </thead>
                <tbody className="divide-y divide-white/5">
                   {products.map((p: Product) => (
-                    <tr key={p.id} className="group hover:bg-white/[0.02] transition-colors">
+                    <tr key={p.id} className={`group transition-colors ${selectedIds.includes(p.id) ? "bg-indigo-500/5" : "hover:bg-white/[0.02]"}`}>
+                       <td className="py-6 px-4">
+                          <div className="flex items-center justify-center">
+                             <input 
+                               type="checkbox" 
+                               className="size-4 rounded border-white/20 bg-white/5 checked:bg-indigo-500 checked:border-indigo-500 transition-all cursor-pointer"
+                               checked={selectedIds.includes(p.id)}
+                               onChange={(e) => {
+                                  if (e.target.checked) {
+                                     setSelectedIds([...selectedIds, p.id]);
+                                  } else {
+                                     setSelectedIds(selectedIds.filter(id => id !== p.id));
+                                  }
+                               }}
+                             />
+                          </div>
+                       </td>
                        <td className="py-6 px-4">
                           <div className="flex items-center gap-4">
                              <div className="relative size-12 rounded-xl bg-white/5 border border-white/5 overflow-hidden shrink-0">

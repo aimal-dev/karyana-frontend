@@ -30,6 +30,7 @@ export default function SellerProductsPage() {
     categoryId: number;
     image: string;
   } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -43,11 +44,22 @@ export default function SellerProductsPage() {
 
   const deleteProduct = useMutation({
     mutationFn: async (id: number) => {
-      await api.delete(`/products/${id}`);
+      await api.delete(`/product/${id}`); // Correct: singular /product/:id from router
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["seller-products"] });
       toast({ variant: "success", title: "Deleted", description: "Product removed successfully" });
+    }
+  });
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: number[]) => {
+      await api.post("/products/delete-many", { ids });
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["seller-products"] });
+      toast({ variant: "success", title: "Deleted", description: `${data?.count || 'Selected'} products removed.` });
+      setSelectedIds([]);
     }
   });
 
@@ -116,6 +128,25 @@ export default function SellerProductsPage() {
                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-primary/30 transition-all font-medium"
                />
             </div>
+            
+            {selectedIds.length > 0 && (
+               <div className="flex items-center gap-4 bg-red-500/10 border border-red-500/20 px-6 py-2 rounded-2xl animate-in fade-in slide-in-from-right-2">
+                  <span className="text-red-500 font-black uppercase tracking-widest text-xs whitespace-nowrap">{selectedIds.length} Selected</span>
+                  <button 
+                    onClick={() => {
+                        if (confirm(`Delete ${selectedIds.length} products?`)) {
+                            bulkDeleteMutation.mutate(selectedIds);
+                        }
+                    }}
+                    disabled={bulkDeleteMutation.isPending}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-red-500/20"
+                  >
+                     {bulkDeleteMutation.isPending ? <Loader2 className="size-3 animate-spin" /> : <Trash2 className="size-3" />}
+                     Delete
+                  </button>
+               </div>
+            )}
+
             <div className="flex gap-4">
                <select className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-gray-400 outline-none">
                   <option>All Categories</option>
@@ -132,6 +163,19 @@ export default function SellerProductsPage() {
             <table className="w-full text-left border-collapse">
                <thead>
                   <tr className="border-b border-white/5">
+                     <th className="pb-4 px-4 w-12">
+                        <div className="flex items-center justify-center">
+                           <input 
+                             type="checkbox" 
+                             className="size-4 rounded border-white/20 bg-white/5 checked:bg-primary checked:border-primary transition-all cursor-pointer"
+                             checked={products.length > 0 && selectedIds.length === products.length}
+                             onChange={(e) => {
+                                if (e.target.checked) setSelectedIds(products.map((p: any) => p.id));
+                                else setSelectedIds([]);
+                             }}
+                           />
+                        </div>
+                     </th>
                      <th className="pb-4 text-[10px] font-black text-gray-500 uppercase tracking-widest px-4">Product Info</th>
                      <th className="pb-4 text-[10px] font-black text-gray-500 uppercase tracking-widest px-4">Category</th>
                      <th className="pb-4 text-[10px] font-black text-gray-500 uppercase tracking-widest px-4">Price</th>
@@ -143,7 +187,7 @@ export default function SellerProductsPage() {
                <tbody className="divide-y divide-white/5">
                   {products.length === 0 ? (
                     <tr>
-                       <td colSpan={6} className="py-20 text-center">
+                       <td colSpan={7} className="py-20 text-center">
                           <Package className="size-12 text-gray-700 mx-auto mb-4" />
                           <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">No products found</p>
                        </td>
@@ -163,7 +207,20 @@ export default function SellerProductsPage() {
                       isOnSale?: boolean;
                       category?: { name: string };
                     }) => (
-                      <tr key={p.id} className="group hover:bg-white/[0.02] transition-colors">
+                      <tr key={p.id} className={`group transition-colors ${selectedIds.includes(p.id) ? "bg-primary/5" : "hover:bg-white/[0.02]"}`}>
+                         <td className="py-6 px-4">
+                            <div className="flex items-center justify-center">
+                               <input 
+                                 type="checkbox" 
+                                 className="size-4 rounded border-white/20 bg-white/5 checked:bg-primary checked:border-primary transition-all cursor-pointer"
+                                 checked={selectedIds.includes(p.id)}
+                                 onChange={(e) => {
+                                    if (e.target.checked) setSelectedIds([...selectedIds, p.id]);
+                                    else setSelectedIds(selectedIds.filter(id => id !== p.id));
+                                 }}
+                               />
+                            </div>
+                         </td>
                          <td className="py-6 px-4">
                             <div className="flex items-center gap-4">
                                <div className="relative size-12 rounded-xl bg-white/5 border border-white/5 overflow-hidden flex items-center justify-center p-1">

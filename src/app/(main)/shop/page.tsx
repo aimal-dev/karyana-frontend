@@ -35,6 +35,7 @@ function ShopContent() {
   const [sortBy, setSortBy] = useState("default");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [tempPriceRange, setTempPriceRange] = useState({ min: 0, max: 1000 });
+  const [visibleCategories, setVisibleCategories] = useState(10);
   const category = searchParams.get("category");
   const addToCart = useCartStore((state) => state.addToCart);
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
@@ -147,7 +148,7 @@ function ShopContent() {
                     </span>
                   </button>
                 </li>
-                {catData?.categories.map((cat) => (
+                {catData?.categories.slice(0, visibleCategories).map((cat) => (
                   <li key={cat.id}>
                     <button 
                       onClick={() => handleCategoryChange(cat.id.toString())}
@@ -161,6 +162,14 @@ function ShopContent() {
                   </li>
                 ))}
               </ul>
+              {catData?.categories && catData.categories.length > visibleCategories && (
+                 <button 
+                   onClick={() => setVisibleCategories(prev => prev + 10)}
+                   className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors mt-3 flex items-center gap-2 pl-4"
+                 >
+                    + VIEW ALL
+                 </button>
+              )}
             </div>
 
             {/* Filter by Price */}

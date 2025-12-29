@@ -24,6 +24,7 @@ export default function AdminCategoriesPage() {
     name: string;
     image: string | null;
   } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -42,6 +43,17 @@ export default function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] });
       toast({ variant: "success", title: "Deleted", description: "Category removed globally" });
+    }
+  });
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: number[]) => {
+      await api.post("/categories/delete-many", { ids });
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] });
+      toast({ variant: "success", title: "Deleted", description: `${data?.count || 'Selected'} categories removed.` });
+      setSelectedIds([]);
     }
   });
 
@@ -82,7 +94,33 @@ export default function AdminCategoriesPage() {
       </div>
       
       {/* Bulk Operations */}
-      <div className="flex justify-end -mt-4 sm:-mt-6">
+      <div className="flex justify-end -mt-4 sm:-mt-6 gap-3">
+        {selectedIds.length > 0 && (
+           <button 
+             onClick={() => {
+                if (confirm(`Delete ${selectedIds.length} categories?`)) {
+                   bulkDeleteMutation.mutate(selectedIds);
+                }
+             }}
+             disabled={bulkDeleteMutation.isPending}
+             className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 animate-in fade-in zoom-in"
+           >
+              {bulkDeleteMutation.isPending ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
+              Delete ({selectedIds.length})
+           </button>
+        )}
+        <button 
+          onClick={() => {
+             if (selectedIds.length === categories.length) {
+                setSelectedIds([]);
+             } else {
+                setSelectedIds(categories.map((c: { id: number }) => c.id));
+             }
+          }}
+          className="px-4 py-2 bg-white/5 border border-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all"
+        >
+           {selectedIds.length === categories.length ? "Deselect All" : "Select All"}
+        </button>
         <BulkOperations 
           type="categories" 
           onSuccess={() => queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] })} 
@@ -91,7 +129,22 @@ export default function AdminCategoriesPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
          {categories.map((cat: { id: number; name: string; image: string | null; seller?: { name: string } }) => (
-           <div key={cat.id} className="group relative bg-white/5 border border-white/5 rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-6 hover:border-indigo-500/30 transition-all duration-500">
+           <div 
+             key={cat.id} 
+             className={`group relative border rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-6 transition-all duration-500 ${selectedIds.includes(cat.id) ? "bg-indigo-500/10 border-indigo-500/50" : "bg-white/5 border-white/5 hover:border-indigo-500/30"}`}
+           >
+              <div className="absolute top-6 left-6 z-10">
+                 <input 
+                   type="checkbox" 
+                   className="size-5 rounded-md border-white/20 bg-black/40 checked:bg-indigo-500 checked:border-indigo-500 transition-all cursor-pointer backdrop-blur-md"
+                   checked={selectedIds.includes(cat.id)}
+                   onChange={(e) => {
+                      if (e.target.checked) setSelectedIds([...selectedIds, cat.id]);
+                      else setSelectedIds(selectedIds.filter(id => id !== cat.id));
+                   }}
+                 />
+              </div>
+
               <div className="aspect-square rounded-2xl bg-white/5 border border-white/5 mb-5 md:mb-6 overflow-hidden relative flex items-center justify-center shadow-2xl">
                  {cat.image ? (
                    <NextImage 
