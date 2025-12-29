@@ -20,7 +20,9 @@ export default function SellerProfilePage() {
   const { toast } = useToast();
   const [profileData, setProfileData] = useState({
     name: "",
-    email: ""
+    email: "",
+    phone: "",
+    whatsappApiKey: ""
   });
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -34,15 +36,17 @@ export default function SellerProfilePage() {
       const response = await api.get("/users/me");
       setProfileData({
         name: response.data.user.name || "",
-        email: response.data.user.email || ""
+        email: response.data.user.email || "",
+        phone: response.data.user.phone || "",
+        whatsappApiKey: response.data.user.whatsappApiKey || ""
       });
       return response.data.user;
     }
   });
 
   const updateProfile = useMutation({
-    mutationFn: async (data: { name: string; email: string }) => {
-      await api.put("/users/profile", data);
+    mutationFn: async (data: { name: string; email: string; phone: string; whatsappApiKey: string }) => {
+      await api.put("/auth/profile", data);
     },
     onSuccess: () => {
       toast({ variant: "success", title: "Success", description: "Profile updated successfully" });
@@ -144,6 +148,35 @@ export default function SellerProfilePage() {
                        type="email"
                      />
                   </div>
+               </div>
+               <div className="space-y-2">
+                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">WhatsApp Phone Number</label>
+                  <div className="relative group">
+                     <div className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 group-focus-within:text-emerald-500 transition-colors flex items-center justify-center font-bold">W</div>
+                     <Input 
+                       value={profileData.phone}
+                       onChange={e => setProfileData({...profileData, phone: e.target.value})}
+                       className="bg-white/5 border-white/5 h-12 rounded-xl pl-12 text-sm text-white"
+                       placeholder="+923001234567"
+                     />
+                  </div>
+                  <p className="text-[9px] text-gray-500 italic ml-1">* Include country code (e.g. +92)</p>
+               </div>
+
+               <div className="space-y-2">
+                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">WhatsApp API Key (CallMeBot)</label>
+                  <div className="relative group">
+                     <Key className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
+                     <Input 
+                       value={profileData.whatsappApiKey}
+                       onChange={e => setProfileData({...profileData, whatsappApiKey: e.target.value})}
+                       className="bg-white/5 border-white/5 h-12 rounded-xl pl-12 text-sm text-white"
+                       placeholder="Enter your CallMeBot API Key"
+                     />
+                  </div>
+                  <p className="text-[9px] text-gray-400 ml-1">
+                    Get your free key by sending <span className="text-emerald-500 font-bold underline">I allow callmebot to send me messages</span> to <span className="text-white">+34 644 10 55 19</span> on WhatsApp.
+                  </p>
                </div>
 
                <Button 

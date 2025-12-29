@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProductModal } from "@/components/dashboard/ProductModal";
+import { BulkOperations } from "@/components/dashboard/BulkOperations";
 import { useState } from "react";
 
 export default function AdminProductsPage() {
@@ -85,6 +86,11 @@ export default function AdminProductsPage() {
             <Plus className="size-4" />
             Add Product
          </button>
+      </div>
+
+      {/* Bulk Operations */}
+      <div className="flex justify-end -mt-6 sm:-mt-6">
+        <BulkOperations onSuccess={() => queryClient.invalidateQueries({ queryKey: ["admin-all-products"] })} />
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-[2rem] md:rounded-[2.5rem] p-4 md:p-8">

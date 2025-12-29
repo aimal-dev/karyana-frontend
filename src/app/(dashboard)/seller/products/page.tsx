@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/Button";
 import { ProductModal } from "@/components/dashboard/ProductModal";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { BulkOperations } from "@/components/dashboard/BulkOperations";
 
 export default function SellerProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -98,6 +99,11 @@ export default function SellerProductsPage() {
             <Plus className="size-5" />
             Add New Product
          </Button>
+      </div>
+
+      {/* Bulk Operations */}
+      <div className="flex justify-end -mt-6">
+        <BulkOperations onSuccess={() => queryClient.invalidateQueries({ queryKey: ["seller-products"] })} />
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-[2.5rem] p-8">
