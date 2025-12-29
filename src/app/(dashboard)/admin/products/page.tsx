@@ -58,6 +58,13 @@ export default function AdminProductsPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-all-products"] });
       toast({ variant: "success", title: "Deleted", description: `${data?.count || 'Selected'} products removed.` });
       setSelectedIds([]);
+    },
+    onError: (error: any) => {
+      toast({ 
+        variant: "destructive", 
+        title: "Error", 
+        description: error.response?.data?.error || "Failed to delete products" 
+      });
     }
   });
 
