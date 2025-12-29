@@ -53,6 +53,13 @@ export default function CategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ["seller-categories-list"] });
       toast({ variant: "success", title: "Deleted", description: `${data?.count || 'Selected'} categories removed.` });
       setSelectedIds([]);
+    },
+    onError: (error: any) => {
+      toast({ 
+        variant: "destructive", 
+        title: "Error", 
+        description: error.response?.data?.error || "Failed to delete categories" 
+      });
     }
   });
 
