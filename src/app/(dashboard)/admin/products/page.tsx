@@ -20,13 +20,24 @@ export default function AdminProductsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const limit = 10;
+
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-all-products"],
+    queryKey: ["admin-all-products", page, search],
     queryFn: async () => {
-      const res = await api.get("/products/all");
+      const res = await api.get(`/products/all?page=${page}&limit=${limit}&search=${search}`);
       return res.data;
-    }
+    },
+    placeholderData: (prev) => prev // Keep previous data while fetching new to prevent flickering
   });
+
+  // Debounced search handler
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+     setSearch(e.target.value);
+     setPage(1); // Reset to page 1 on search
+  };
 
   const deleteProduct = useMutation({
     mutationFn: async (id: number) => {
@@ -59,7 +70,7 @@ export default function AdminProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className="h-[60vh] flex items-center justify-center">
         <Loader2 className="size-10 text-indigo-500 animate-spin" />
@@ -68,6 +79,7 @@ export default function AdminProductsPage() {
   }
 
   const products = data?.products || [];
+  const totalPages = Math.ceil((data?.total || 0) / limit);
 
   return (
     <div className="space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -99,6 +111,8 @@ export default function AdminProductsPage() {
                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-500" />
                <input 
                  type="text" 
+                 value={search}
+                 onChange={handleSearch}
                  placeholder="Search global inventory..." 
                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-indigo-500/30 transition-all font-medium"
                />
@@ -190,6 +204,49 @@ export default function AdminProductsPage() {
             </div>
          </div>
       </div>
+
+      {/* Pagination Controls */}
+      {data?.total > 0 && (
+        <div className="mt-8 pt-8 border-t border-white/5 flex items-center justify-between">
+            <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">
+                Showing {products.length} of {data.total} products
+            </p>
+            <div className="flex gap-2">
+                <button 
+                  disabled={page === 1}
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  className="px-4 py-2 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black uppercase text-gray-500 hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center gap-1 px-2">
+                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                       let pNum = i + 1;
+                       if (page > 3) pNum = page - 2 + i;
+                       if (pNum > totalPages) return null;
+                       
+                       return (
+                           <button
+                             key={pNum}
+                             onClick={() => setPage(pNum)}
+                             className={`size-8 rounded-lg text-[10px] font-black flex items-center justify-center transition-all ${page === pNum ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20" : "bg-white/5 text-gray-500 hover:bg-white/10"}`}
+                           >
+                             {pNum}
+                           </button>
+                       );
+                   })}
+                </div>
+                <button 
+                  disabled={page >= totalPages}
+                  onClick={() => setPage(p => p + 1)}
+                  className="px-4 py-2 rounded-lg bg-white/10 border border-white/10 text-[10px] font-black uppercase text-white hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+            </div>
+        </div>
+      )}
+
 
       <ProductModal 
         isOpen={isModalOpen} 
