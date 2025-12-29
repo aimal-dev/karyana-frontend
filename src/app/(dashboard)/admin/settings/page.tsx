@@ -18,7 +18,8 @@ export default function AdminSettingsPage() {
     storeName: "Karyana Store",
     primaryColor: "#80B500",
     trendingLimit: 10,
-    featuredLimit: 10
+    featuredLimit: 10,
+    categoriesLimit: 10
   });
 
   const { isLoading } = useQuery({
@@ -32,7 +33,8 @@ export default function AdminSettingsPage() {
           storeName: response.data.settings.storeName || "Karyana Store",
           primaryColor: response.data.settings.primaryColor || "#80B500",
           trendingLimit: response.data.settings.trendingLimit || 10,
-          featuredLimit: response.data.settings.featuredLimit || 10
+          featuredLimit: response.data.settings.featuredLimit || 10,
+          categoriesLimit: response.data.settings.categoriesLimit || 10
         });
       }
       return response.data.settings;
@@ -210,6 +212,17 @@ export default function AdminSettingsPage() {
                     className="bg-white/5 border-white/5 h-12 rounded-xl text-sm text-white"
                   />
                   <p className="text-[8px] text-gray-500 uppercase tracking-widest font-bold ml-1">Number of products in Featured section</p>
+               </div>
+
+               <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Categories Limit</label>
+                  <Input 
+                    type="number"
+                    value={settings.categoriesLimit}
+                    onChange={e => setSettings({...settings, categoriesLimit: parseInt(e.target.value)})}
+                    className="bg-white/5 border-white/5 h-12 rounded-xl text-sm text-white"
+                  />
+                  <p className="text-[8px] text-gray-500 uppercase tracking-widest font-bold ml-1">Number of categories on Home Page</p>
                </div>
             </div>
          </div>

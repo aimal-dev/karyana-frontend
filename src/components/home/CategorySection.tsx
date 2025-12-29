@@ -10,7 +10,7 @@ interface Category {
   image: string | null;
 }
 
-export default function CategorySection() {
+export default function CategorySection({ limit = 10 }: { limit?: number }) {
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function CategorySection() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {categories.map((cat) => (
+          {categories.slice(0, limit).map((cat) => (
             <Link 
               key={cat.id} 
               href={`/shop?category=${cat.name}`} 

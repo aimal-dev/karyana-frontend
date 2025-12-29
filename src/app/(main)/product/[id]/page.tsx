@@ -29,6 +29,7 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
   const [activeTab, setActiveTab] = useState<"description" | "reviews" | "shipping">("description");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
+  const [selectedVariant, setSelectedVariant] = useState<{ id: number; name: string; price: number; stock: number } | null>(null);
   const addToCart = useCartStore((state) => state.addToCart);
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -165,14 +166,39 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
               </div>
               <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-none uppercase font-subheading-main">{product.title}</h1>
               <div className="flex items-center gap-4 pt-2">
-                 <span className="text-primary font-medium text-4xl tracking-tighter">RS {product.price.toFixed(2)}</span>
-                 <span className="text-muted-foreground line-through text-lg font-medium opacity-50 tracking-tighter">RS {(product.price * 1.2).toFixed(2)}</span>
-              </div>
+                  <span className="text-primary font-medium text-4xl tracking-tighter">RS {selectedVariant ? selectedVariant.price.toFixed(2) : product.price.toFixed(2)}</span>
+                  {(selectedVariant ? selectedVariant.price < (product.price * 1.2) : true) && (
+                     <span className="text-muted-foreground line-through text-lg font-medium opacity-50 tracking-tighter">RS {(selectedVariant ? selectedVariant.price * 1.2 : product.price * 1.2).toFixed(2)}</span>
+                  )}
+               </div>
             </div>
 
             <p className="text-muted-foreground text-sm leading-relaxed font-medium uppercase tracking-wide">
                {product.description || "Indulge in the pure, unadulterated goodness of our premium organic products. Sourced directly from local farms, ensuring maximum freshness and nutrient density for your daily health needs."}
             </p>
+
+            {/* Variants Selector */}
+            {product.variants && product.variants.length > 0 && (
+                <div className="space-y-3 pt-4 border-t border-border">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Select Option:</span>
+                    <div className="flex flex-wrap gap-2">
+                        {product.variants.map((variant: any) => (
+                            <button
+                                key={variant.id}
+                                onClick={() => setSelectedVariant(variant)}
+                                className={cn(
+                                    "px-4 py-2 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all",
+                                    selectedVariant?.id === variant.id 
+                                        ? "bg-primary text-primary-foreground border-primary ring-2 ring-primary/20" 
+                                        : "bg-muted/10 border-border hover:border-primary/50 text-foreground"
+                                )}
+                            >
+                                {variant.name} - RS {variant.price}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4 border-y border-border py-10">
@@ -183,10 +209,19 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
                </div>
                
                <Button 
-                 onClick={() => addToCart({ ...product, productId: product.id, qty })}
-                 className="flex-1 h-14 text-[10px] font-black tracking-[0.2em] rounded-2xl gap-3 group shadow-lg shadow-primary/20"
+                 onClick={() => addToCart({ 
+                    ...product, 
+                    productId: product.id, 
+                    qty,
+                    variantId: selectedVariant?.id,
+                    price: selectedVariant ? selectedVariant.price : product.price, // Override price
+                    title: selectedVariant ? `${product.title} (${selectedVariant.name})` : product.title
+                 })}
+                 disabled={selectedVariant ? selectedVariant.stock < 1 : product.stock < 1}
+                 className="flex-1 h-14 text-[10px] font-black tracking-[0.2em] rounded-2xl gap-3 group shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
                >
-                  <ShoppingCart className="size-4 group-hover:translate-x-1 transition-transform" /> ADD TO BAG
+                  <ShoppingCart className="size-4 group-hover:translate-x-1 transition-transform" /> 
+                  {(selectedVariant ? selectedVariant.stock < 1 : product.stock < 1) ? "OUT OF STOCK" : "ADD TO BAG"}
                </Button>
 
                <Button variant="outline" size="icon" className="h-14 w-14 rounded-2xl border-border shrink-0 hover:bg-primary/10 hover:text-primary transition-colors">
@@ -197,7 +232,7 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
             <div className="space-y-3 pt-2">
                <div className="flex items-center gap-3">
                   <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest w-24">SKU:</span>
-                  <span className="font-black text-[10px] uppercase tracking-widest">KRYN-{product.id}024</span>
+                  <span className="font-black text-[10px] uppercase tracking-widest">KRYN-{product.id}{selectedVariant ? `-${selectedVariant.id}` : ''}</span>
                </div>
                <div className="flex items-center gap-3">
                   <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest w-24">Category:</span>
@@ -205,7 +240,7 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
                </div>
                <div className="flex items-center gap-3">
                   <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest w-24">Tags:</span>
-                  <span className="font-black text-[10px] uppercase tracking-widest">Organic, Fresh, Premium</span>
+                  <span className="font-black text-[10px] uppercase tracking-widest">{product.tags ? product.tags.slice(0, 3).join(", ") : "Organic, Fresh"}</span>
                </div>
             </div>
 

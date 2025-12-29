@@ -19,7 +19,8 @@ export default function HomePage() {
 
   const limits = {
     trending: settingsData?.settings?.trendingLimit || 10,
-    featured: settingsData?.settings?.featuredLimit || 10
+    featured: settingsData?.settings?.featuredLimit || 10,
+    categories: settingsData?.settings?.categoriesLimit || 10
   };
 
   return (
@@ -28,7 +29,7 @@ export default function HomePage() {
       <CategoryGrid />
       
       <div className="px-4 md:px-8 lg:px-20">
-        <CategorySection />
+        <CategorySection limit={limits.categories} />
         
         {/* Trendy Products */}
         <ProductSection 
