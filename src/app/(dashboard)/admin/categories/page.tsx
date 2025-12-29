@@ -9,8 +9,8 @@ import {
   Edit3, 
   Trash2, 
   Loader2,
-  FolderOpen,
-  Store
+  Store,
+  Layers
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { CategoryModal } from "@/components/dashboard/CategoryModal";
@@ -65,71 +65,103 @@ export default function AdminCategoriesPage() {
   const categories = data?.categories || [];
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 font-subheading-main">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
          <div>
-            <h1 className="text-4xl font-black text-white tracking-tight uppercase font-subheading-main">Global Categories</h1>
+            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight uppercase">Global Categories</h1>
             <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Manage all product categories on the platform</p>
          </div>
          <Button 
            onClick={handleCreate}
-           className="h-14 px-8 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95 transition-all gap-3"
+           className="h-12 md:h-14 px-6 md:px-8 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest shadow-lg shadow-indigo-600/20 hover:scale-[1.02] active:scale-95 transition-all gap-3 w-full sm:w-auto"
          >
-            <Plus className="size-5" />
-            Create Category
+            <Plus className="size-4 md:size-5" />
+            <span className="text-xs md:text-sm">Create Category</span>
          </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
          {categories.map((cat: { id: number; name: string; image: string | null; seller?: { name: string } }) => (
-           <div key={cat.id} className="group relative bg-white/5 border border-white/5 rounded-[2.5rem] p-6 hover:border-indigo-500/30 transition-all">
-              <div className="aspect-square rounded-2xl bg-white/5 border border-white/5 mb-6 overflow-hidden relative flex items-center justify-center">
+           <div key={cat.id} className="group relative bg-white/5 border border-white/5 rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-6 hover:border-indigo-500/30 transition-all duration-500">
+              <div className="aspect-square rounded-2xl bg-white/5 border border-white/5 mb-5 md:mb-6 overflow-hidden relative flex items-center justify-center shadow-2xl">
                  {cat.image ? (
-                   <NextImage src={cat.image} fill className="object-cover" alt={cat.name} unoptimized />
+                   <NextImage 
+                     src={cat.image} 
+                     fill 
+                     className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                     alt={cat.name} 
+                     unoptimized 
+                   />
                  ) : (
-                   <FolderOpen className="size-10 text-gray-700" />
+                   <div className="flex flex-col items-center gap-2 opacity-20 group-hover:opacity-40 transition-opacity">
+                     <Layers className="size-12" />
+                     <span className="text-[10px] font-black uppercase tracking-widest">No Image</span>
+                   </div>
                  )}
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-4 md:space-y-6">
                  <div>
-                    <h3 className="text-lg font-black text-white uppercase tracking-tight">{cat.name}</h3>
-                    {cat.seller && (
-                      <div className="flex items-center gap-2 mt-1 opacity-50">
-                         <Store className="size-3 text-indigo-400" />
-                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{cat.seller.name}</span>
-                      </div>
-                    )}
+                    <h3 className="text-lg md:text-xl font-black text-white uppercase tracking-tight truncate group-hover:text-indigo-400 transition-colors">{cat.name}</h3>
+                    <div className="flex items-center gap-2 mt-1.5 min-h-[16px]">
+                       {cat.seller ? (
+                         <div className="flex items-center gap-1.5 opacity-50">
+                            <Store className="size-3 text-indigo-400" />
+                            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 truncate max-w-[120px]">{cat.seller.name}</span>
+                         </div>
+                       ) : (
+                         <div className="flex items-center gap-1.5 opacity-30">
+                            <Layers className="size-3 text-emerald-400" />
+                            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-emerald-400">System Core</span>
+                         </div>
+                       )}
+                    </div>
                  </div>
 
-                 <div className="flex items-center gap-2">
+                 <div className="flex items-center gap-2 md:gap-3">
                     <button 
                       onClick={() => handleEdit(cat)}
-                      className="flex-1 h-10 rounded-xl bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                      className="flex-1 h-10 md:h-12 rounded-xl md:rounded-2xl bg-white/5 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center justify-center gap-2 hover:bg-white/10 hover:text-white transition-all shadow-sm"
                     >
-                       <Edit3 className="size-3" /> Edit
+                       <Edit3 className="size-3 md:size-3.5" /> Edit
                     </button>
                     <button 
                       onClick={() => {
-                        if (confirm("Delete this category?")) {
+                        if (confirm("Permanently delete this category? All products under it might lose their classification.")) {
                           deleteCategory.mutate(cat.id);
                         }
                       }}
-                      className="size-10 rounded-xl bg-red-500/10 flex items-center justify-center hover:bg-red-500 group/del transition-all"
+                      className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-red-500/10 flex items-center justify-center hover:bg-red-500 group/del transition-all shadow-sm"
                     >
-                       <Trash2 className="size-4 text-red-500 group-hover/del:text-white" />
+                       <Trash2 className="size-4 md:size-5 text-red-500 group-hover/del:text-white" />
                     </button>
                  </div>
               </div>
+
+              {/* Decorative Corner Glow */}
+              <div className="absolute -top-1 -right-1 size-16 bg-indigo-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
            </div>
          ))}
       </div>
+
+      {categories.length === 0 && (
+        <div className="h-[40vh] border-2 border-dashed border-white/5 rounded-[3rem] flex flex-col items-center justify-center text-center p-10">
+           <Layers className="size-16 text-gray-800 mb-4" />
+           <h2 className="text-xl font-black text-white uppercase tracking-tight">No Categories Found</h2>
+           <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-2">Get started by creating your first global category</p>
+        </div>
+      )}
 
       <CategoryModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         category={selectedCategory}
-        onSuccess={() => queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] })}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] });
+          queryClient.invalidateQueries({ queryKey: ["seller-categories"] });
+          toast({ variant: "success", title: "Success", description: "Category list updated" });
+        }}
       />
     </div>
   );

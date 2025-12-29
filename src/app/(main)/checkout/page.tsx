@@ -178,7 +178,7 @@ export default function CheckoutPage() {
         <div className="size-32 rounded-full bg-primary/10 border-4 border-primary flex items-center justify-center mb-8 animate-pulse">
           <CheckCircle2 className="size-16 text-primary" />
         </div>
-        <h2 className="text-4xl font-black tracking-tighter mb-2 uppercase font-subheading-main text-center">
+        <h2 className="text-4xl font-medium tracking-tighter mb-2 uppercase font-subheading-main text-center">
           ORDER PLACED <span className="text-primary">SUCCESSFULLY!</span>
         </h2>
         <p className="text-muted-foreground font-medium text-[14px] uppercase tracking-widest mb-8 text-center max-w-md opacity-70 font-subheading">
@@ -186,7 +186,7 @@ export default function CheckoutPage() {
         </p>
         <div className="flex gap-4">
           <Link href="/shop">
-            <Button variant="outline" size="lg" className="h-12 px-10 gap-3 font-black tracking-[0.2em] text-[10px] rounded-xl uppercase">
+            <Button variant="outline" size="lg" className="h-12 px-10 gap-3 font-medium tracking-[0.2em] text-[10px] rounded-xl uppercase">
               CONTINUE SHOPPING
             </Button>
           </Link>
@@ -202,7 +202,7 @@ export default function CheckoutPage() {
           {/* Header */}
           <div className="flex items-center gap-4 mb-12">
             <Link href="/cart">
-              <Button variant="ghost" size="sm" className="gap-2 font-black text-[9px] tracking-[0.2em] uppercase">
+              <Button variant="ghost" size="sm" className="gap-2 font-medium text-[9px] tracking-[0.2em] uppercase">
                 <ArrowLeft className="size-3.5" /> BACK TO CART
               </Button>
             </Link>
@@ -212,8 +212,8 @@ export default function CheckoutPage() {
             {/* Payment Method Selection */}
             <div className="flex-1 space-y-8">
               <div className="border-b border-border pb-6 font-subheading-main">
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
-                  SECURE <span className="text-primary italic">CHECKOUT</span>
+                <h1 className="text-4xl md:text-5xl font-medium tracking-tighter uppercase font-subheading-main">
+                  SECURE <span className="text-primary font-subheading-main">CHECKOUT</span>
                 </h1>
                 <p className="text-muted-foreground font-medium text-[14px] uppercase tracking-widest mt-2 font-subheading">
                   Select your preferred payment method
@@ -222,7 +222,7 @@ export default function CheckoutPage() {
 
               {/* Shipping Form */}
               <div className="space-y-6">
-                 <h2 className="text-xl font-black uppercase tracking-tighter font-subheading-main">
+                 <h2 className="text-xl font-medium uppercase tracking-tighter font-subheading-main">
                     Shipping <span className="text-primary">Details</span>
                  </h2>
                  <div className="grid gap-4">
@@ -275,7 +275,7 @@ export default function CheckoutPage() {
 
               {error && (
                 <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-6">
-                  <p className="text-destructive font-black text-sm uppercase tracking-wider">
+                  <p className="text-destructive font-medium text-sm uppercase tracking-wider">
                     {error}
                   </p>
                 </div>
@@ -305,7 +305,7 @@ export default function CheckoutPage() {
                       </div>
 
                       <div className="flex-1 text-left">
-                        <h3 className="font-black text-lg uppercase font-subheading-main">
+                        <h3 className="font-medium text-lg uppercase font-subheading-main">
                           {method.name}
                         </h3>
                         <p className="text-muted-foreground font-medium text-[14px] uppercase tracking-widest font-subheading">
@@ -343,7 +343,7 @@ export default function CheckoutPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-black text-sm uppercase tracking-wider font-subheading-main">
+                  <p className="font-medium text-sm uppercase tracking-wider font-subheading-main">
                     Secure Payment
                   </p>
                   <p className="text-muted-foreground font-medium text-[14px] uppercase tracking-widest font-subheading">
@@ -357,7 +357,7 @@ export default function CheckoutPage() {
             <aside className="w-full lg:w-96 shrink-0">
               <div className="bg-card border border-border rounded-[2.5rem] p-10 space-y-8 sticky top-32 shadow-sm">
                 <div className="space-y-4 font-subheading-main">
-                  <h2 className="font-black text-3xl uppercase tracking-tighter leading-none italic">
+                  <h2 className="font-medium text-3xl uppercase tracking-tighter leading-none font-subheading-main">
                     ORDER <span className="text-primary">SUMMARY</span>
                   </h2>
                   <div className="w-8 h-1 bg-primary" />
@@ -387,12 +387,12 @@ export default function CheckoutPage() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-black text-sm uppercase truncate font-subheading-main">{item.title}</h4>
+                        <h4 className="font-medium text-sm uppercase truncate font-subheading-main">{item.title}</h4>
                         <p className="text-muted-foreground font-medium text-[14px] uppercase tracking-widest font-subheading">
                           Qty: {item.qty}
                         </p>
                       </div>
-                      <p className="font-black text-sm tracking-tighter">
+                      <p className="font-medium text-sm tracking-tighter">
                         Rs {(item.price * item.qty).toFixed(2)}
                       </p>
                     </div>
@@ -403,28 +403,28 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center font-medium text-[14px] tracking-widest uppercase font-subheading">
                     <span className="text-muted-foreground">Subtotal ({items.length} items)</span>
-                    <span className="font-black tracking-tighter text-lg">
+                    <span className="font-medium tracking-tighter text-lg">
                       Rs {totalPrice().toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center font-medium text-[14px] tracking-widest uppercase text-primary font-subheading">
                     <span>Delivery Fee</span>
-                    <span className="font-black">FREE</span>
+                    <span className="font-medium">FREE</span>
                   </div>
                   <div className="flex justify-between items-center font-medium text-[14px] tracking-widest uppercase font-subheading">
                     <span className="text-muted-foreground">Est. Taxes</span>
-                    <span className="font-black tracking-tighter text-lg">Rs 0.00</span>
+                    <span className="font-medium tracking-tighter text-lg">Rs 0.00</span>
                   </div>
 
                   <div className="border-t border-border pt-6 flex justify-between items-end font-subheading-main">
-                    <span className="font-black text-2xl uppercase tracking-tighter">
+                    <span className="font-medium text-2xl uppercase tracking-tighter">
                       Total Price
                     </span>
                     <div className="text-right">
-                      <span className="block text-primary font-black text-4xl tracking-tighter leading-none">
+                      <span className="block text-primary font-medium text-4xl tracking-tighter leading-none">
                         Rs {totalPrice().toFixed(2)}
                       </span>
-                      <span className="text-muted-foreground text-[8px] font-black uppercase tracking-[0.2em] italic font-subheading">
+                      <span className="text-muted-foreground text-[8px] font-medium uppercase tracking-[0.2em] italic font-subheading">
                         Includes all taxes
                       </span>
                     </div>
@@ -435,7 +435,7 @@ export default function CheckoutPage() {
                 <Button
                   onClick={handleCheckout}
                   disabled={!selectedMethod || isProcessing}
-                  className="w-full h-14 text-[10px] font-black tracking-[0.3em] rounded-2xl gap-3 shadow-lg shadow-primary/20 uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-14 text-[10px] font-medium tracking-[0.3em] rounded-2xl gap-3 shadow-lg shadow-primary/20 uppercase disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isProcessing ? (
                     <>
@@ -452,18 +452,18 @@ export default function CheckoutPage() {
 
                 {/* Payment Icons */}
                 <div className="flex flex-col items-center gap-4 text-center pt-4">
-                  <p className="text-[8px] font-black tracking-[0.2em] text-muted-foreground uppercase font-subheading">
+                  <p className="text-[8px] font-medium tracking-[0.2em] text-muted-foreground uppercase font-subheading">
                     Accepted Secure Payments
                   </p>
                   <div className="flex gap-3 flex-wrap justify-center">
                     <div className="px-3 py-1.5 bg-muted/50 border border-border rounded-lg">
-                      <span className="text-[10px] font-black tracking-wider text-muted-foreground">PAYPAL</span>
+                      <span className="text-[10px] font-medium tracking-wider text-muted-foreground">PAYPAL</span>
                     </div>
                     <div className="px-3 py-1.5 bg-muted/50 border border-border rounded-lg">
-                      <span className="text-[10px] font-black tracking-wider text-muted-foreground">VISA</span>
+                      <span className="text-[10px] font-medium tracking-wider text-muted-foreground">VISA</span>
                     </div>
                     <div className="px-3 py-1.5 bg-muted/50 border border-border rounded-lg">
-                      <span className="text-[10px] font-black tracking-wider text-muted-foreground">MASTERCARD</span>
+                      <span className="text-[10px] font-medium tracking-wider text-muted-foreground">MASTERCARD</span>
                     </div>
                   </div>
                 </div>

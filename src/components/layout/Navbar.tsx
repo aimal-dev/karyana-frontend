@@ -35,12 +35,28 @@ interface Notification {
 
 export default function Navbar() {
   const { items, setOpen } = useCartStore();
+  const { items: wishlistItems } = useWishlistStore();
+  const { data: user } = useUser();
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const cartCount = items.reduce((acc, item) => acc + item.qty, 0);
+  const wishlistCount = wishlistItems.length;
+
+  const handleLogout = () => {
+    const role = user?.role;
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    queryClient.setQueryData(["user"], null);
+    
+    if (role === "ADMIN") router.push("/admin-login");
+    else if (role === "SELLER") router.push("/seller-login");
+    else router.push("/login");
+  };
 
   const { data: settingsData } = useQuery({
     queryKey: ["store-settings"],
-    queryFn: async () => (await api.get("/admin/settings")).data
+    queryFn: async () => (await api.get("/settings")).data
   });
 
   const logoUrl = settingsData?.settings?.logoUrl;
@@ -146,11 +162,78 @@ export default function Navbar() {
                      key={link.href}
                      href={link.href}
                      onClick={() => setIsMobileMenuOpen(false)}
-                     className="text-2xl font-black uppercase tracking-wider hover:text-primary transition-colors"
+                     className="text-1xl font-medium capitalize tracking-wider hover:text-primary transition-colors"
                    >
                      {link.label}
                    </Link>
                  ))}
+              </div>
+
+              <div className="mt-auto space-y-4 pt-8 border-t border-border">
+                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">Account & Shopping</p>
+                 
+                 <div className="grid grid-cols-2 gap-4">
+                    <button 
+                      onClick={() => { setOpen(true); setIsMobileMenuOpen(false); }}
+                      className="flex flex-col items-center justify-center p-4 rounded-2xl bg-muted/50 hover:bg-primary/10 hover:text-primary transition-all group relative"
+                    >
+                       <ShoppingCart className="size-6 mb-2" />
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Cart</span>
+                       {cartCount > 0 && (
+                         <Badge className="absolute top-2 right-2 size-5 flex items-center justify-center p-0 text-[10px] font-black">
+                           {cartCount}
+                         </Badge>
+                       )}
+                    </button>
+
+                    <Link 
+                      href="/wishlist" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex flex-col items-center justify-center p-4 rounded-2xl bg-muted/50 hover:bg-primary/10 hover:text-primary transition-all group relative"
+                    >
+                       <Heart className="size-6 mb-2" />
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Wishlist</span>
+                       {wishlistCount > 0 && (
+                         <Badge className="absolute top-2 right-2 size-5 flex items-center justify-center p-0 text-[10px] font-black">
+                           {wishlistCount}
+                         </Badge>
+                       )}
+                    </Link>
+                 </div>
+
+                 {user ? (
+                   <>
+                     <Link 
+                       href={user.role === 'ADMIN' ? '/admin' : user.role === 'SELLER' ? '/seller' : '/dashboard'}
+                       onClick={() => setIsMobileMenuOpen(false)}
+                       className="flex items-center gap-4 p-4 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+                     >
+                        <div className="size-10 rounded-xl bg-white/20 flex items-center justify-center font-black text-lg">
+                          {user.name?.charAt(0).toUpperCase() || "U"}
+                        </div>
+                        <div className="flex-1 overflow-hidden">
+                          <p className="text-xs font-black uppercase tracking-wider truncate">{user.name}</p>
+                          <p className="text-[10px] opacity-70 truncate uppercase tracking-widest">{user.role} Dashboard</p>
+                        </div>
+                     </Link>
+                     <button 
+                       onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                       className="flex items-center justify-center gap-2 w-full p-4 rounded-2xl border border-destructive/20 text-destructive hover:bg-destructive/10 transition-all font-black uppercase tracking-widest text-[10px]"
+                     >
+                        <LogOut className="size-4" />
+                        Log Out
+                     </button>
+                   </>
+                 ) : (
+                   <Link 
+                     href="/login"
+                     onClick={() => setIsMobileMenuOpen(false)}
+                     className="flex items-center justify-center gap-2 p-4 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-black uppercase tracking-widest text-xs"
+                   >
+                      <User className="size-4" />
+                      Sign In / Register
+                   </Link>
+                 )}
               </div>
             </motion.div>
           </>
@@ -181,7 +264,7 @@ function UserMenu() {
 
   if (isLoading) {
     return (
-      <Button variant="ghost" size="icon" className="hidden sm:flex rounded-full">
+      <Button variant="ghost" size="icon" className="flex rounded-full">
         <Loader2 className="size-5 animate-spin text-muted-foreground" />
       </Button>
     );
@@ -200,7 +283,7 @@ function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="hidden sm:flex hover:text-primary rounded-full ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+        <Button variant="ghost" size="icon" className="flex hover:text-primary rounded-full ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
           <div className="size-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black text-sm shadow-md shadow-primary/20">
             {user.name ? user.name.charAt(0).toUpperCase() : "U"}
           </div>

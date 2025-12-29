@@ -15,10 +15,16 @@ export function useUser() {
   return useQuery({
     queryKey: ["user"],
     queryFn: async () => {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      if (!token) return null;
+      
       try {
         const res = await api.get("/auth/me");
         return res.data.user as User;
-      } catch {
+      } catch (error: any) {
+        if (error.response?.status === 403 || error.response?.status === 401) {
+          localStorage.removeItem("token"); // Clear invalid token
+        }
         return null; // Not logged in
       }
     },

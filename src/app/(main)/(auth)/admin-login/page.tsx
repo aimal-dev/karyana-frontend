@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="mt-10 min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="mt-15 min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Intense red/green glow for danger/admin area */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[200px] pointer-events-none" />
       
@@ -103,10 +103,9 @@ export default function AdminLoginPage() {
             {loading ? <Loader2 className="size-5 animate-spin" /> : <span className="flex items-center gap-2">EXECUTE LOGIN <ShieldCheck className="size-4" /></span>}
           </Button>
 
-          <div className="text-center pt-4">
-            <Link href="/login" className="text-muted-foreground hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest">
-              Return to Public Access
-            </Link>
+          <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest pt-4 border-t border-border">
+               <Link href="/login" className="text-muted-foreground hover:text-primary transition-colors">Standard User Login</Link>
+               <Link href="/seller-login" className="text-muted-foreground hover:text-primary transition-colors">Seller Access</Link>
           </div>
         </form>
       </AuthCard>

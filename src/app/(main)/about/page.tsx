@@ -119,7 +119,7 @@ export default function AboutPage() {
         <div className="rounded-[2.5rem] bg-accent/10 border border-border p-12 text-center space-y-8 relative overflow-hidden">
            <div className="absolute inset-0 bg-grid-white/5 opacity-20" />
            <div className="relative z-10 space-y-6">
-              <h2 className="text-5xl font-medium capitalize tracking-tighter">Ready to Experience the Difference?</h2>
+              <h2 className="text-4xl lg:text-5xl font-medium capitalize tracking-tighter">Ready to Experience the Difference?</h2>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                  <Link href="/shop">
                     <Button className="h-14 px-8 text-xs font-black tracking-[0.2em] rounded-xl uppercase">

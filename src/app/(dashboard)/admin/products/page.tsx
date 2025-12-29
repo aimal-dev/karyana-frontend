@@ -69,10 +69,10 @@ export default function AdminProductsPage() {
   const products = data?.products || [];
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-0">
          <div>
-            <h1 className="text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">Global Inventory</h1>
+            <h1 className="text-3xl md:text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">Global Inventory</h1>
             <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Monitor and manage all products across all sellers</p>
          </div>
          <button 
@@ -80,16 +80,16 @@ export default function AdminProductsPage() {
              setSelectedProduct(null);
              setIsModalOpen(true);
            }}
-           className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+           className="w-full sm:w-auto bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3.5 md:py-3 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
          >
             <Plus className="size-4" />
             Add Product
          </button>
       </div>
 
-      <div className="bg-white/5 border border-white/5 rounded-[2.5rem] p-8">
-         <div className="flex items-center justify-between mb-8">
-            <div className="relative w-96">
+      <div className="bg-white/5 border border-white/5 rounded-[2rem] md:rounded-[2.5rem] p-4 md:p-8">
+         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div className="relative w-full md:w-96">
                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-500" />
                <input 
                  type="text" 
@@ -99,7 +99,8 @@ export default function AdminProductsPage() {
             </div>
          </div>
 
-         <div className="overflow-x-auto">
+         <div className="overflow-x-auto -mx-4 md:mx-0">
+            <div className="min-w-[800px] px-4 md:px-0">
             <table className="w-full text-left border-collapse">
                <thead>
                   <tr className="border-b border-white/5">
@@ -113,19 +114,18 @@ export default function AdminProductsPage() {
                <tbody className="divide-y divide-white/5">
                   {products.map((p: Product) => (
                     <tr key={p.id} className="group hover:bg-white/[0.02] transition-colors">
-                       {/* ... table content same but adding onClick to Edit button ... */}
                        <td className="py-6 px-4">
                           <div className="flex items-center gap-4">
-                             <div className="relative size-12 rounded-xl bg-white/5 border border-white/5 overflow-hidden">
+                             <div className="relative size-12 rounded-xl bg-white/5 border border-white/5 overflow-hidden shrink-0">
                                 {p.image ? (
                                   <NextImage src={p.image} fill className="object-cover" alt="" unoptimized />
                                 ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-gray-600 font-medium">?</div>
+                                  <div className="w-full h-full flex items-center justify-center text-gray-600 font-medium font-bold text-xs">NO IMG</div>
                                 )}
                              </div>
-                             <div>
-                                <div className="flex items-center gap-2">
-                                   <p className="text-sm font-bold text-white leading-tight">{p.title}</p>
+                             <div className="min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                   <p className="text-sm font-bold text-white leading-tight truncate">{p.title}</p>
                                    <div className="flex gap-1">
                                       {p.isFeatured && (
                                         <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Featured</span>
@@ -145,14 +145,14 @@ export default function AdminProductsPage() {
                        <td className="py-6 px-4">
                           <div className="flex items-center gap-2 text-gray-300">
                              <Store className="size-3.5 text-indigo-500" />
-                             <span className="text-xs font-bold">{p.seller?.name}</span>
+                             <span className="text-xs font-bold whitespace-nowrap">{p.seller?.name}</span>
                           </div>
                        </td>
-                       <td className="py-6 px-4 text-xs font-bold text-gray-500">
+                       <td className="py-6 px-4 text-xs font-bold text-gray-500 whitespace-nowrap">
                           {p.category?.name}
                        </td>
                        <td className="py-6 px-4">
-                          <span className="text-xs font-black text-white">{p.stock} units</span>
+                          <span className="text-xs font-black text-white whitespace-nowrap">{p.stock} units</span>
                        </td>
                        <td className="py-6 px-4 text-right">
                           <div className="flex items-center justify-end gap-2">
@@ -181,6 +181,7 @@ export default function AdminProductsPage() {
                   ))}
                </tbody>
             </table>
+            </div>
          </div>
       </div>
 

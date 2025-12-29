@@ -108,8 +108,9 @@ export default function SellerLoginPage() {
               New merchant? 
               <Link href="/seller-register" className="text-primary ml-2 hover:underline">Apply Now</Link>
             </p>
-            <div className="text-[10px] pt-4 border-t border-white/5">
-               <Link href="/login" className="text-muted-foreground hover:text-white transition-colors uppercase tracking-widest font-bold">Standard User Login</Link>
+            <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest pt-4 border-t border-border">
+               <Link href="/login" className="text-muted-foreground hover:text-primary transition-colors">Standard User Login</Link>
+               <Link href="/admin-login" className="text-muted-foreground hover:text-primary transition-colors">Admin Access</Link>
             </div>
           </div>
         </form>

@@ -2,11 +2,12 @@
 
 import { AdminSidebar } from "@/components/dashboard/AdminSidebar";
 import { NotificationsMenu } from "@/components/dashboard/NotificationsMenu";
-import { Search, Menu } from "lucide-react";
+import { Search, Menu, Lock as LockIcon, LogOut as LogOutIcon } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AdminLayout({
   children,
@@ -16,6 +17,16 @@ export default function AdminLayout({
   const { data: user, isLoading } = useUser();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    queryClient.setQueryData(["user"], null);
+    router.push("/admin-login");
+  };
 
   useEffect(() => {
     if (!isLoading && (!user || user.role !== "ADMIN")) {
@@ -68,14 +79,54 @@ export default function AdminLayout({
            <div className="flex items-center gap-2 lg:gap-6">
               <NotificationsMenu role="ADMIN" />
               
-              <div className="flex items-center gap-4 pl-4 lg:pl-6 lg:border-l lg:border-white/5">
-                 <div className="hidden lg:flex flex-col items-end">
-                    <span className="text-sm font-bold text-white">System Admin</span>
-                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-tighter">Superuser</span>
-                 </div>
-                 <div className="size-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-black shadow-lg shadow-indigo-500/20">
-                    S
-                 </div>
+              <div className="relative">
+                <button 
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center gap-4 pl-4 lg:pl-6 lg:border-l lg:border-white/5 hover:opacity-80 transition-all outline-none"
+                >
+                   <div className="hidden lg:flex flex-col items-end">
+                      <span className="text-sm font-bold text-white">System Admin</span>
+                      <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-tighter">Superuser</span>
+                   </div>
+                   <div className="size-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-black shadow-lg shadow-indigo-500/20">
+                      S
+                   </div>
+                </button>
+
+                {isProfileOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsProfileOpen(false)} />
+                    <div className="absolute right-0 mt-4 w-56 bg-[#111] border border-white/10 rounded-2xl shadow-2xl py-2 z-20 animate-in fade-in zoom-in-95 duration-200">
+                       <div className="px-4 py-3 border-b border-white/5 mb-1 lg:hidden">
+                          <p className="text-sm font-bold text-white">System Admin</p>
+                          <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mt-0.5">Superuser</p>
+                       </div>
+                       
+                       <button 
+                         onClick={() => {
+                           router.push("/admin/security");
+                           setIsProfileOpen(false);
+                         }}
+                         className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all text-left"
+                       >
+                          <div className="size-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                             <LockIcon size={14} />
+                          </div>
+                          Security & Settings
+                       </button>
+
+                       <button 
+                         onClick={handleLogout}
+                         className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-all text-left"
+                       >
+                          <div className="size-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400">
+                             <LogOutIcon size={14} />
+                          </div>
+                          Logout Session
+                       </button>
+                    </div>
+                  </>
+                )}
               </div>
            </div>
         </header>

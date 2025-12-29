@@ -7,7 +7,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { 
-  ShieldCheck, 
   Lock, 
   KeyRound, 
   Store, 
@@ -32,7 +31,7 @@ export default function AdminSecurityPage() {
   const [sellerPassword, setSellerPassword] = useState("");
 
   // Fetch Sellers for selection
-  const { data: sellersData, isLoading: sellersLoading } = useQuery({
+  const { data: sellersData } = useQuery({
     queryKey: ["admin-sellers-list"],
     queryFn: async () => (await api.get("/admin/sellers")).data,
   });
@@ -51,7 +50,7 @@ export default function AdminSecurityPage() {
       toast({ variant: "success", title: "Success", description: "Your password has been updated" });
       setAdminData({ currentPassword: "", newPassword: "", confirmPassword: "" });
     },
-    onError: (err: any) => {
+    onError: (err: { response?: { data?: { error?: string } }; message: string }) => {
       toast({ variant: "destructive", title: "Update Failed", description: err.response?.data?.error || err.message });
     }
   });
@@ -69,33 +68,35 @@ export default function AdminSecurityPage() {
       setSellerId("");
       setSellerPassword("");
     },
-    onError: (err: any) => {
+    onError: (err: { response?: { data?: { error?: string } }; message: string }) => {
       toast({ variant: "destructive", title: "Update Failed", description: err.response?.data?.error || err.message });
     }
   });
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div>
-         <h1 className="text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">Security & Access</h1>
-         <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Manage administrative credentials and store security</p>
+    <div className="space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 font-subheading-main">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+         <div>
+            <h1 className="text-3xl md:text-4xl font-medium text-white tracking-tighter uppercase">Security & Access</h1>
+            <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Manage administrative credentials and store security</p>
+         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
          {/* Admin Security Section */}
-         <div className="bg-white/5 border border-white/5 rounded-[2rem] p-10 space-y-8">
+         <div className="bg-white/5 border border-white/5 rounded-[2rem] p-6 md:p-10 space-y-8">
             <div className="flex items-center gap-4 mb-2">
-               <div className="size-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+               <div className="size-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 shrink-0">
                   <UserCog className="size-6 text-indigo-500" />
                </div>
                <div>
-                  <h3 className="text-xl font-medium text-white uppercase tracking-tight font-subheading-main">My Credentials</h3>
+                  <h3 className="text-xl font-medium text-white uppercase tracking-tight">My Credentials</h3>
                   <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Update your admin login details</p>
                </div>
             </div>
 
             <div className="space-y-6">
-               <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex gap-3 text-xs font-bold items-center">
+               <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex gap-3 text-xs font-bold items-center leading-relaxed">
                   <AlertTriangle className="size-4 shrink-0" />
                   Updating your password will require you to log back in on all devices.
                </div>
@@ -155,13 +156,13 @@ export default function AdminSecurityPage() {
          </div>
 
          {/* Seller Management Section */}
-         <div className="bg-white/5 border border-white/5 rounded-[2rem] p-10 space-y-8">
+         <div className="bg-white/5 border border-white/5 rounded-[2rem] p-6 md:p-10 space-y-8">
             <div className="flex items-center gap-4 mb-2">
-               <div className="size-12 rounded-2xl bg-teal-500/10 flex items-center justify-center border border-teal-500/20">
+               <div className="size-12 rounded-2xl bg-teal-500/10 flex items-center justify-center border border-teal-500/20 shrink-0">
                   <Store className="size-6 text-teal-500" />
                </div>
                <div>
-                  <h3 className="text-xl font-medium text-white uppercase tracking-tight font-subheading-main">Seller Passwords</h3>
+                  <h3 className="text-xl font-medium text-white uppercase tracking-tight">Seller Passwords</h3>
                   <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Reset credentials for any seller</p>
                </div>
             </div>
@@ -170,16 +171,21 @@ export default function AdminSecurityPage() {
                <div className="space-y-4">
                   <div className="space-y-2">
                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Select Seller</label>
+                     <div className="relative">
                      <select 
                        value={sellerId}
                        onChange={e => setSellerId(e.target.value)}
                        className="w-full bg-white/5 border border-white/10 h-12 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-teal-500/50 transition-colors appearance-none font-bold"
                      >
                         <option value="" className="bg-[#111]">Choose a seller account...</option>
-                        {sellersData?.sellers.map((s: any) => (
+                        {sellersData?.sellers.map((s: { id: string; name: string; email: string }) => (
                            <option key={s.id} value={s.id} className="bg-[#111]">{s.name} ({s.email})</option>
                         ))}
                      </select>
+                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                        <UserCog className="size-3.5" />
+                     </div>
+                     </div>
                   </div>
 
                   <div className="space-y-2">
@@ -205,11 +211,11 @@ export default function AdminSecurityPage() {
                   </Button>
                </div>
 
-               <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex items-start gap-4">
+               <div className="p-5 md:p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex items-start gap-4">
                   <div className="size-8 rounded-lg bg-teal-500/10 flex items-center justify-center shrink-0">
                      <Mail className="size-4 text-teal-500" />
                   </div>
-                  <p className="text-[11px] text-gray-500 font-medium">
+                  <p className="text-[11px] text-gray-500 font-medium leading-relaxed">
                      The seller will not be automatically notified of password changes. Please ensure you communicate the new temporary credentials to them securely.
                   </p>
                </div>

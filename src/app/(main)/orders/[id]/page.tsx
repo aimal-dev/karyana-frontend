@@ -198,7 +198,9 @@ export default function OrderDetailsPage() {
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium uppercase tracking-wider ${
                              order.payment?.status === "SUCCESS" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
                           }`}>
-                             {order.payment?.status || "PENDING"}
+                              {order.payment?.status === "PENDING" && order.payment?.method === "CASH_ON_DELIVERY" 
+                                 ? "Pay on Delivery" 
+                                 : (order.payment?.status || "PENDING")}
                           </span>
                        </div>
                     </div>

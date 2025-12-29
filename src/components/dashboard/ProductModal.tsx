@@ -157,22 +157,22 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] shadow-2xl overflow-y-auto max-h-[90vh] animate-in fade-in zoom-in-95 duration-300">
-        <div className="p-8 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#111] z-10">
+      <div className="relative w-full max-w-2xl bg-[#111] border-x border-t md:border border-white/10 rounded-t-[2rem] md:rounded-[2.5rem] shadow-2xl overflow-y-auto max-h-[92vh] md:max-h-[90vh] animate-in fade-in zoom-in-95 slide-in-from-bottom-10 md:slide-in-from-bottom-0 duration-300 mt-auto md:mt-0">
+        <div className="p-6 md:p-8 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#111]/90 backdrop-blur-md z-10">
            <div>
-              <h2 className="text-2xl font-medium text-white">{product ? "Edit Product" : "Add New Product"}</h2>
+              <h2 className="text-xl md:text-2xl font-medium text-white">{product ? "Edit Product" : "Add New Product"}</h2>
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Fill in the details for your inventory</p>
            </div>
-           <button onClick={onClose} className="size-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+           <button onClick={onClose} className="size-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors shrink-0">
               <X className="size-5 text-gray-400" />
            </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
-           <div className="grid grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6 md:space-y-8">
+           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
               <div className="space-y-2">
                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Product Title</label>
                  <Input 
@@ -183,8 +183,9 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                    required
                  />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 text-left">
                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Category</label>
+                 <div className="relative">
                  <select 
                    value={formData.categoryId}
                    onChange={e => setFormData({...formData, categoryId: e.target.value})}
@@ -196,10 +197,14 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                       <option key={cat.id} value={cat.id} className="bg-[#111]">{cat.name}</option>
                     ))}
                  </select>
+                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                    <Plus className="size-3.5 rotate-45" />
+                 </div>
+                 </div>
               </div>
 
               {isAdmin && (
-                <div className="space-y-2 col-span-2 border-t border-white/5 pt-6">
+                <div className="space-y-2 col-span-1 sm:col-span-2 border-t border-white/5 pt-6">
                    <label className="text-[10px] font-black text-indigo-400 uppercase tracking-widest ml-1">Assign to Seller (Admin Only)</label>
                    <div className="relative">
                      <select 
@@ -218,32 +223,31 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
               )}
            </div>
 
-           <div className="space-y-2">
+           <div className="space-y-2 text-left">
               <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Description</label>
               <textarea 
                 value={formData.description}
                 onChange={e => setFormData({...formData, description: e.target.value})}
-                className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-colors min-h-[100px]"
+                className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-primary/50 transition-colors min-h-[100px] md:min-h-[120px]"
                 placeholder="Describe your product..."
                 required
               />
            </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 text-left">
                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Product Tags (Search Keywords)</label>
                <Input 
                  value={formData.tags}
                  onChange={e => setFormData({...formData, tags: e.target.value})}
-                 placeholder="e.g. juice, orange, drink, beverage (Comma separated)"
+                 placeholder="e.g. juice, orange, drink"
                  className="bg-white/5 border-white/10 h-12 rounded-xl text-white"
                />
-                <p className="text-[9px] text-gray-600 ml-1 font-medium">Add keywords like synonyms to help users find this product (e.g. &apos;ata&apos; for flour)</p>
+                <p className="text-[9px] text-gray-600 ml-1 font-medium leading-relaxed">Add keywords like synonyms to help users find this product (e.g. &apos;ata&apos; for flour)</p>
             </div>
 
-           {/* Product Status Toggles */}
-           <div className="space-y-4 pt-4 border-t border-white/5">
+           <div className="space-y-4 pt-4 border-t border-white/5 text-left">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Settings</label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                  <button 
                    type="button"
                    onClick={() => setFormData({...formData, isFeatured: !formData.isFeatured})}
@@ -272,7 +276,7 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                    type="button"
                    onClick={() => setFormData({...formData, isOnSale: !formData.isOnSale})}
                    className={cn(
-                     "flex items-center justify-center py-3 rounded-xl border transition-all gap-2",
+                     "flex items-center justify-center py-3 rounded-xl border transition-all gap-2 col-span-2 md:col-span-1",
                      formData.isOnSale ? "bg-red-500/10 border-red-500/50 text-red-500" : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/10"
                    )}
                  >
@@ -296,8 +300,8 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
               )}
            </div>
 
-           <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
+           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
+              <div className="space-y-2 text-left">
                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Price ($)</label>
                  <Input 
                    type="number"
@@ -308,7 +312,7 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                    required
                  />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 text-left">
                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Stock Quantity</label>
                  <Input 
                    type="number"
@@ -321,16 +325,14 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
               </div>
            </div>
 
-           {/* Image Section */}
-           <div className="space-y-6 pt-4 border-t border-white/5">
-              {/* Main Featured Image */}
-              <div className="space-y-3">
-                 <div className="flex items-center justify-between">
+           <div className="space-y-6 pt-4 border-t border-white/5 text-left">
+              <div className="space-y-4">
+                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
                     <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Main Featured Image (Required)</label>
                     <ImageUpload 
                       label="Upload Main Image" 
                       onUploadSuccess={(url) => setFormData(prev => ({ ...prev, image: url }))} 
-                      className="w-44"
+                      className="w-full sm:w-44"
                     />
                  </div>
                  <div className="relative">
@@ -345,9 +347,8 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                  </div>
               </div>
 
-              {/* Gallery Section */}
               <div className="space-y-4">
-                 <div className="flex items-center justify-between">
+                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
                    <div className="flex flex-col">
                       <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Product Gallery</label>
                       <span className="text-[8px] text-gray-600 ml-1">Add more pictures of your product</span>
@@ -362,9 +363,9 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                            return { ...prev, images: newImages, image: newMain };
                          });
                        }} 
-                       className="w-40"
+                       className="flex-1 sm:w-40"
                      />
-                     <button type="button" onClick={handleAddImageUrl} className="size-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors border border-white/10">
+                     <button type="button" onClick={handleAddImageUrl} className="size-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors border border-white/10 shrink-0">
                        <Plus className="size-4 text-primary" />
                      </button>
                    </div>
@@ -373,23 +374,23 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                  <div className="grid grid-cols-1 gap-3">
                     {formData.images.map((url, index) => (
                       <div key={index} className="flex gap-3">
-                         <div className="relative flex-1 group">
+                         <div className="relative flex-1 group min-w-0">
                             <Input 
                               value={url}
                               onChange={e => handleImageUrlChange(index, e.target.value)}
                               placeholder="Image URL"
-                              className="bg-white/5 border-white/10 h-12 rounded-xl text-white pl-4 pr-32 text-xs"
+                              className="bg-white/5 border-white/10 h-12 rounded-xl text-white pl-4 pr-24 md:pr-32 text-[10px] md:text-xs"
                             />
                             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
                                {formData.image === url ? (
-                                 <span className="px-3 py-1 bg-primary text-white rounded-lg text-[8px] font-black uppercase tracking-widest leading-none">
+                                 <span className="px-2 md:px-3 py-1 bg-primary text-white rounded-lg text-[7px] md:text-[8px] font-black uppercase tracking-widest leading-none">
                                    Featured
                                  </span>
                                ) : (
                                  <button 
                                    type="button" 
                                    onClick={() => setFeaturedImage(url)}
-                                   className="px-3 py-1 bg-white/5 text-gray-400 hover:text-white border border-white/10 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all"
+                                   className="px-2 md:px-3 py-1 bg-white/5 text-gray-400 hover:text-white border border-white/10 rounded-lg text-[7px] md:text-[8px] font-black uppercase tracking-widest transition-all"
                                  >
                                     Set Main
                                  </button>
@@ -399,7 +400,7 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                          <button 
                            type="button" 
                            onClick={() => handleRemoveImage(index)}
-                           className="size-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center hover:bg-red-500 text-red-500 hover:text-white transition-all shadow-sm"
+                           className="size-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center hover:bg-red-500 text-red-500 hover:text-white transition-all shadow-sm shrink-0"
                          >
                             <X className="size-4" />
                          </button>
@@ -414,18 +415,18 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
               </div>
            </div>
 
-           <div className="pt-4 flex gap-4">
+           <div className="pt-4 flex flex-col sm:flex-row gap-4">
               <Button 
                 type="submit" 
                 disabled={loading}
-                className="flex-1 h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                className="flex-1 h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-all"
               >
                  {loading ? <Loader2 className="size-5 animate-spin" /> : (product ? "Save Changes" : "Create Product")}
               </Button>
               <Button 
                 type="button" 
                 onClick={onClose}
-                className="px-10 h-14 rounded-2xl bg-white/5 border border-white/5 text-gray-400 font-black uppercase tracking-widest hover:bg-white/10 transition-all text-xs"
+                className="w-full sm:w-auto px-10 h-14 rounded-2xl bg-white/5 border border-white/5 text-gray-400 font-black uppercase tracking-widest hover:bg-white/10 transition-all text-[10px]"
               >
                  Cancel
               </Button>
