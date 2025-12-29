@@ -42,6 +42,13 @@ export default function CategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["seller-categories-list"] });
       toast({ variant: "success", title: "Deleted", description: "Category removed" });
+    },
+    onError: (error: any) => {
+      toast({ 
+        variant: "destructive", 
+        title: "Error", 
+        description: error.response?.data?.error || "Failed to delete category" 
+      });
     }
   });
 

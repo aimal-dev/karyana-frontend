@@ -42,11 +42,18 @@ export default function AdminProductsPage() {
 
   const deleteProduct = useMutation({
     mutationFn: async (id: number) => {
-      await api.delete(`/product/${id}`);
+      await api.delete(`/products/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-all-products"] });
       toast({ variant: "success", title: "Deleted", description: "Product removed by admin" });
+    },
+    onError: (error: any) => {
+      toast({ 
+        variant: "destructive", 
+        title: "Error", 
+        description: error.response?.data?.error || "Failed to delete product" 
+      });
     }
   });
 

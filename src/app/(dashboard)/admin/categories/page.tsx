@@ -43,6 +43,13 @@ export default function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] });
       toast({ variant: "success", title: "Deleted", description: "Category removed globally" });
+    },
+    onError: (error: any) => {
+      toast({ 
+        variant: "destructive", 
+        title: "Error", 
+        description: error.response?.data?.error || "Failed to delete category" 
+      });
     }
   });
 

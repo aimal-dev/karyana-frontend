@@ -44,11 +44,18 @@ export default function SellerProductsPage() {
 
   const deleteProduct = useMutation({
     mutationFn: async (id: number) => {
-      await api.delete(`/product/${id}`); // Correct: singular /product/:id from router
+      await api.delete(`/products/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["seller-products"] });
       toast({ variant: "success", title: "Deleted", description: "Product removed successfully" });
+    },
+    onError: (error: any) => {
+      toast({ 
+        variant: "destructive", 
+        title: "Error", 
+        description: error.response?.data?.error || "Failed to delete product" 
+      });
     }
   });
 
