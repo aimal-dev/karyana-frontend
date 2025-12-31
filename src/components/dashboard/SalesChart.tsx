@@ -46,7 +46,7 @@ export function SalesChart({
   const chartData = data && data.length > 0 ? data : defaultData;
 
   return (
-    <div className="bg-white/5 border border-white/5 rounded-[2rem] p-8 h-[450px] relative overflow-hidden group">
+    <div className="bg-white/5 border border-white/5 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-8 h-[380px] md:h-[450px] relative overflow-hidden group">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
       
       <div className="relative z-10">

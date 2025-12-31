@@ -1,12 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { X, Loader2, Upload } from "lucide-react";
+import { X, Loader2, Upload, Star } from "lucide-react";
 import NextImage from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import api from "@/lib/axios";
 import { ImageUpload } from "./ImageUpload";
+import { cn } from "@/lib/utils";
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface CategoryModalProps {
     id: number;
     name: string;
     image: string | null;
+    isStarred?: boolean;
   } | null;
   onSuccess: () => void;
 }
@@ -23,19 +25,22 @@ export function CategoryModal({ isOpen, onClose, category, onSuccess }: Category
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    image: ""
+    image: "",
+    isStarred: false
   });
 
   useEffect(() => {
     if (category) {
       setFormData({
         name: category.name || "",
-        image: category.image || ""
+        image: category.image || "",
+        isStarred: category.isStarred || false
       });
     } else {
       setFormData({
         name: "",
-        image: ""
+        image: "",
+        isStarred: false
       });
     }
   }, [category, isOpen]);
@@ -85,6 +90,31 @@ export function CategoryModal({ isOpen, onClose, category, onSuccess }: Category
                 className="bg-white/5 border-white/10 h-12 rounded-xl text-white font-medium"
                 required
               />
+           </div>
+
+           <div className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 group hover:border-indigo-500/50 transition-all">
+              <div className="flex items-center gap-3">
+                 <div className={cn("size-10 rounded-xl flex items-center justify-center transition-all shadow-lg", formData.isStarred ? "bg-amber-500 text-white shadow-amber-500/20" : "bg-white/5 text-gray-500")}>
+                    <Star className={cn("size-5", formData.isStarred && "fill-current")} />
+                 </div>
+                 <div>
+                    <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Featured on Storefront</h4>
+                    <p className="text-[8px] font-bold text-gray-500 uppercase tracking-wider">Starred categories appear first in results</p>
+                 </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, isStarred: !prev.isStarred }))}
+                className={cn(
+                   "relative w-12 h-6 rounded-full transition-all duration-300",
+                   formData.isStarred ? "bg-indigo-600 shadow-lg shadow-indigo-600/20" : "bg-white/5 border border-white/10"
+                )}
+              >
+                 <div className={cn(
+                    "absolute top-1 size-4 rounded-full bg-white transition-all duration-300 shadow-sm",
+                    formData.isStarred ? "left-7" : "left-1"
+                 )} />
+              </button>
            </div>
 
             <div className="space-y-4 pt-4 border-t border-white/5">

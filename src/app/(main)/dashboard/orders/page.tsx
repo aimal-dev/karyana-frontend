@@ -99,7 +99,7 @@ export default function OrdersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
         {isLoading ? (
           <div className="flex justify-center p-12">
             <Loader2 className="size-8 animate-spin text-primary" />

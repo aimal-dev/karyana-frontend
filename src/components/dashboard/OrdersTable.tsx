@@ -37,7 +37,7 @@ const statusStyles = {
 
 export function OrdersTable({ orders = defaultOrders, title = "Recent Orders", subtitle = "A list of recent orders with their details", onView }: OrdersTableProps) {
   return (
-    <div className="bg-white/5 border border-white/5 rounded-[2rem] p-8 overflow-hidden">
+    <div className="bg-white/5 border border-white/5 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-8 overflow-hidden">
       <div className="flex items-center justify-between mb-8">
          <div>
             <h3 className="text-xl font-medium text-white uppercase tracking-tight font-subheading-main">{title}</h3>

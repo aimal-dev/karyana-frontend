@@ -50,7 +50,7 @@ export default function SellerProductsPage() {
       queryClient.invalidateQueries({ queryKey: ["seller-products"] });
       toast({ variant: "success", title: "Deleted", description: "Product removed successfully" });
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { data?: { error?: string } } }) => {
       toast({ 
         variant: "destructive", 
         title: "Error", 
@@ -61,14 +61,15 @@ export default function SellerProductsPage() {
 
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: number[]) => {
-      await api.post("/products/delete-many", { ids });
+      const res = await api.post("/products/delete-many", { ids });
+      return res.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data: { count?: number }) => {
       queryClient.invalidateQueries({ queryKey: ["seller-products"] });
       toast({ variant: "success", title: "Deleted", description: `${data?.count || 'Selected'} products removed.` });
       setSelectedIds([]);
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { data?: { error?: string } } }) => {
       toast({ 
         variant: "destructive", 
         title: "Error", 
@@ -113,14 +114,14 @@ export default function SellerProductsPage() {
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
          <div>
-            <h1 className="text-4xl font-black text-white tracking-tight">Products</h1>
+            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">Products</h1>
             <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px] mt-1">Manage your storefront inventory and stock</p>
          </div>
          <Button 
            onClick={handleCreate}
-           className="h-14 px-8 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-3"
+           className="w-full md:w-auto h-14 px-8 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-3"
          >
             <Plus className="size-5" />
             Add New Product
@@ -132,9 +133,9 @@ export default function SellerProductsPage() {
         <BulkOperations onSuccess={() => queryClient.invalidateQueries({ queryKey: ["seller-products"] })} />
       </div>
 
-      <div className="bg-white/5 border border-white/5 rounded-[2.5rem] p-8">
-         <div className="flex items-center justify-between mb-8 overflow-hidden">
-            <div className="relative w-96">
+      <div className="bg-white/5 border border-white/5 rounded-[2.5rem] p-4 md:p-8">
+         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 overflow-hidden">
+            <div className="relative w-full lg:w-96">
                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-500" />
                <input 
                  type="text" 
@@ -184,7 +185,7 @@ export default function SellerProductsPage() {
                              className="size-4 rounded border-white/20 bg-white/5 checked:bg-primary checked:border-primary transition-all cursor-pointer"
                              checked={products.length > 0 && selectedIds.length === products.length}
                              onChange={(e) => {
-                                if (e.target.checked) setSelectedIds(products.map((p: any) => p.id));
+                                if (e.target.checked) setSelectedIds(products.map((p: { id: number }) => p.id));
                                 else setSelectedIds([]);
                              }}
                            />

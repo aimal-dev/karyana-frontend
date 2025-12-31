@@ -39,11 +39,11 @@ export default function SellerDashboardPage() {
   const stats = data?.stats;
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
       <div>
-         <h1 className="text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">Store Overview</h1>
-         <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Monitor your store performance and sales</p>
+         <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">Store Overview</h1>
+         <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[9px] md:text-[10px] mt-1 opacity-70">Monitor your store performance and sales</p>
       </div>
 
       {/* Primary Metrics */}

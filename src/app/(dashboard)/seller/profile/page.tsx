@@ -103,78 +103,78 @@ export default function SellerProfilePage() {
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-         <h1 className="text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">My Account</h1>
-         <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Manage your profile and security settings</p>
+         <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">My Account</h1>
+         <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[9px] md:text-[10px] mt-1 opacity-70">Manage your profile and security settings</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
          {/* Profile Information */}
-         <div className="bg-white/5 border border-white/5 rounded-[2rem] p-10 space-y-8">
+         <div className="bg-white/5 border border-white/5 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-10 space-y-8">
             <div className="flex items-center gap-4 mb-2">
-               <div className="size-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
-                  <User className="size-6 text-indigo-500" />
+               <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                  <User className="size-5 md:size-6 text-indigo-500" />
                </div>
                <div>
-                  <h3 className="text-xl font-medium text-white uppercase tracking-tight font-subheading-main">Profile Information</h3>
-                  <p className="text-[10px] font-medium text-gray-500 uppercase tracking-widest opacity-70">Update your account details</p>
+                  <h3 className="text-lg md:text-xl font-medium text-white uppercase tracking-tight font-subheading-main">Profile Information</h3>
+                  <p className="text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-widest opacity-70">Update your account details</p>
                </div>
             </div>
 
             <form onSubmit={handleProfileSubmit} className="space-y-6">
                <div className="space-y-2">
-                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">Full Name</label>
+                  <label className="text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">Full Name</label>
                   <div className="relative group">
                      <User className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
                      <Input 
                        value={profileData.name}
                        onChange={e => setProfileData({...profileData, name: e.target.value})}
-                       className="bg-white/5 border-white/5 h-12 rounded-xl pl-12 text-sm text-white"
+                       className="bg-white/5 border-white/5 h-11 md:h-12 rounded-xl pl-12 text-sm text-white"
                        placeholder="Enter your name"
                      />
                   </div>
                </div>
 
                <div className="space-y-2">
-                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">Email Address</label>
+                  <label className="text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">Email Address</label>
                   <div className="relative group">
                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
                      <Input 
                        value={profileData.email}
                        onChange={e => setProfileData({...profileData, email: e.target.value})}
-                       className="bg-white/5 border-white/5 h-12 rounded-xl pl-12 text-sm text-white"
+                       className="bg-white/5 border-white/5 h-11 md:h-12 rounded-xl pl-12 text-sm text-white"
                        placeholder="Enter your email"
                        type="email"
                      />
                   </div>
                </div>
                <div className="space-y-2">
-                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">WhatsApp Phone Number</label>
+                  <label className="text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">WhatsApp Phone Number</label>
                   <div className="relative group">
                      <div className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 group-focus-within:text-emerald-500 transition-colors flex items-center justify-center font-bold">W</div>
                      <Input 
                        value={profileData.phone}
                        onChange={e => setProfileData({...profileData, phone: e.target.value})}
-                       className="bg-white/5 border-white/5 h-12 rounded-xl pl-12 text-sm text-white"
+                       className="bg-white/5 border-white/5 h-11 md:h-12 rounded-xl pl-12 text-sm text-white"
                        placeholder="+923001234567"
                      />
                   </div>
-                  <p className="text-[9px] text-gray-500 italic ml-1">* Include country code (e.g. +92)</p>
+                  <p className="text-[8px] md:text-[9px] text-gray-500 italic ml-1">* Include country code (e.g. +92)</p>
                </div>
 
                <div className="space-y-2">
-                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">WhatsApp API Key (CallMeBot)</label>
+                  <label className="text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">WhatsApp API Key (CallMeBot)</label>
                   <div className="relative group">
                      <Key className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
                      <Input 
                        value={profileData.whatsappApiKey}
                        onChange={e => setProfileData({...profileData, whatsappApiKey: e.target.value})}
-                       className="bg-white/5 border-white/5 h-12 rounded-xl pl-12 text-sm text-white"
+                       className="bg-white/5 border-white/5 h-11 md:h-12 rounded-xl pl-12 text-sm text-white"
                        placeholder="Enter your CallMeBot API Key"
                      />
                   </div>
-                  <p className="text-[9px] text-gray-400 ml-1">
+                  <p className="text-[8px] md:text-[9px] text-gray-400 ml-1 leading-relaxed">
                     Get your free key by sending <span className="text-emerald-500 font-bold underline">I allow callmebot to send me messages</span> to <span className="text-white">+34 644 10 55 19</span> on WhatsApp.
                   </p>
                </div>
@@ -182,7 +182,7 @@ export default function SellerProfilePage() {
                <Button 
                  type="submit"
                  disabled={updateProfile.isPending}
-                 className="w-full h-12 rounded-xl bg-indigo-500 text-white font-medium uppercase tracking-widest hover:bg-indigo-600 shadow-lg shadow-indigo-500/20 gap-2"
+                 className="w-full h-11 md:h-12 rounded-xl bg-indigo-500 text-white font-medium uppercase tracking-widest hover:bg-indigo-600 shadow-lg shadow-indigo-500/20 gap-2 text-xs"
                >
                   {updateProfile.isPending ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
                   Save Changes
@@ -191,55 +191,55 @@ export default function SellerProfilePage() {
          </div>
 
          {/* Password Security */}
-         <div className="bg-white/5 border border-white/5 rounded-[2rem] p-10 space-y-8">
+         <div className="bg-white/5 border border-white/5 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-10 space-y-8">
             <div className="flex items-center gap-4 mb-2">
-               <div className="size-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
-                  <Shield className="size-6 text-amber-500" />
+               <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                  <Shield className="size-5 md:size-6 text-amber-500" />
                </div>
                <div>
-                  <h3 className="text-xl font-medium text-white uppercase tracking-tight font-subheading-main">Password Security</h3>
-                  <p className="text-[10px] font-medium text-gray-500 uppercase tracking-widest opacity-70">Update your password</p>
+                  <h3 className="text-lg md:text-xl font-medium text-white uppercase tracking-tight font-subheading-main">Password Security</h3>
+                  <p className="text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-widest opacity-70">Update your password</p>
                </div>
             </div>
 
             <form onSubmit={handlePasswordSubmit} className="space-y-6">
                <div className="space-y-2">
-                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">Current Password</label>
+                  <label className="text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">Current Password</label>
                   <div className="relative group">
                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 group-focus-within:text-amber-500 transition-colors" />
                      <Input 
                        type="password"
                        value={passwordData.currentPassword}
                        onChange={e => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                       className="bg-white/5 border-white/5 h-12 rounded-xl pl-12 text-sm text-white"
+                       className="bg-white/5 border-white/5 h-11 md:h-12 rounded-xl pl-12 text-sm text-white"
                        placeholder="Enter current password"
                      />
                   </div>
                </div>
 
                <div className="space-y-2">
-                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">New Password</label>
+                  <label className="text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">New Password</label>
                   <div className="relative group">
                      <Key className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 group-focus-within:text-amber-500 transition-colors" />
                      <Input 
                        type="password"
                        value={passwordData.newPassword}
                        onChange={e => setPasswordData({...passwordData, newPassword: e.target.value})}
-                       className="bg-white/5 border-white/5 h-12 rounded-xl pl-12 text-sm text-white"
+                       className="bg-white/5 border-white/5 h-11 md:h-12 rounded-xl pl-12 text-sm text-white"
                        placeholder="Enter new password"
                      />
                   </div>
                </div>
 
                <div className="space-y-2">
-                  <label className="text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">Confirm New Password</label>
+                  <label className="text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-widest ml-1">Confirm New Password</label>
                   <div className="relative group">
                      <Key className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 group-focus-within:text-amber-500 transition-colors" />
                      <Input 
                        type="password"
                        value={passwordData.confirmPassword}
                        onChange={e => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                       className="bg-white/5 border-white/5 h-12 rounded-xl pl-12 text-sm text-white"
+                       className="bg-white/5 border-white/5 h-11 md:h-12 rounded-xl pl-12 text-sm text-white"
                        placeholder="Confirm new password"
                      />
                   </div>
@@ -248,7 +248,7 @@ export default function SellerProfilePage() {
                <Button 
                  type="submit"
                  disabled={updatePassword.isPending}
-                 className="w-full h-12 rounded-xl bg-amber-500 text-white font-medium uppercase tracking-widest hover:bg-amber-600 shadow-lg shadow-amber-500/20 gap-2"
+                 className="w-full h-11 md:h-12 rounded-xl bg-amber-500 text-white font-medium uppercase tracking-widest hover:bg-amber-600 shadow-lg shadow-amber-500/20 gap-2 text-xs"
                >
                   {updatePassword.isPending ? <Loader2 className="size-4 animate-spin" /> : <Lock className="size-4" />}
                   Update Password
@@ -258,17 +258,17 @@ export default function SellerProfilePage() {
       </div>
 
       {/* Account Info Card */}
-      <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-[2rem] p-8">
-         <div className="flex items-center justify-between">
+      <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8">
+         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
                <h4 className="text-lg font-medium text-white uppercase tracking-tight font-subheading-main">Account Status</h4>
                <p className="text-sm font-medium text-gray-400 mt-1">Your account is active and verified</p>
             </div>
-            <div className="flex items-center gap-3">
-               <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium uppercase tracking-widest">
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+               <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-medium uppercase tracking-widest">
                   {user?.role || "SELLER"}
                </div>
-               <div className="size-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-medium text-xl shadow-lg shadow-indigo-500/20">
+               <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-medium text-lg md:text-xl shadow-lg shadow-indigo-500/20">
                   {user?.name?.[0] || "S"}
                </div>
             </div>

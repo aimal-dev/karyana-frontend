@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react";
-import { X, Loader2, Upload, Plus } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { X, Loader2, Upload, Plus, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import api from "@/lib/axios";
@@ -9,6 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { ImageUpload } from "./ImageUpload";
 import { useUser } from "@/hooks/useUser";
+import NextImage from "next/image";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -74,6 +76,8 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
   });
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (product) {
       setFormData({
         title: product.title || "",
@@ -89,7 +93,11 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
         oldPrice: product.oldPrice?.toString() || "",
         tags: product.tags ? product.tags.join(", ") : "",
         sellerId: product.sellerId?.toString() || "",
-        variants: product.variants?.map((v: any) => ({ name: v.name, price: v.price.toString(), stock: v.stock.toString() })) || []
+        variants: product.variants?.map((v: { name: string; price: number | string; stock: number | string }) => ({ 
+          name: v.name, 
+          price: v.price.toString(), 
+          stock: v.stock.toString() 
+        })) || []
       });
     } else {
       setFormData({
@@ -111,7 +119,7 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
     }
   }, [product, isOpen]);
 
-  if (!isOpen) return null;
+  const { toast } = useToast();
 
   const handleAddImageUrl = () => {
     setFormData(prev => ({ ...prev, images: [...prev.images, ""] }));
@@ -132,8 +140,17 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
     setFormData(prev => ({ ...prev, image: url }));
   };
 
+  if (!isOpen) return null;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate image
+    if (!formData.image) {
+      toast({ variant: "destructive", title: "Missing Image", description: "A featured image is required." });
+      return;
+    }
+
     setLoading(true);
 
     const payload = {
@@ -145,16 +162,36 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
       sellerId: isAdmin && formData.sellerId ? Number(formData.sellerId) : undefined
     };
 
+    const payloadSize = JSON.stringify(payload).length;
+    console.log(`[FRONTEND] Payload Size: ${(payloadSize / 1024).toFixed(2)} KB`);
+
     try {
+      let res;
       if (product) {
-        await api.put(`/products/${product.id}`, payload);
+        console.log(`[FRONTEND] PUT /products/${product.id}`);
+        res = await api.put(`/products/${product.id}`, payload);
+        const updatedImage = res.data.updated?.image;
+        console.log("[FRONTEND] PUT Success. Returned Image Length:", updatedImage?.length || 0);
+        console.log("[FRONTEND] First 50 chars of returned image:", updatedImage?.substring(0, 50));
+        
+        if (updatedImage !== payload.image) {
+          console.warn("[FRONTEND] WARNING: Backend returned a different image than sent!");
+        }
+        
+        toast({ variant: "success", title: "Product Updated", description: "Changes saved successfully." });
       } else {
-        await api.post("/products", payload);
+        res = await api.post("/products", payload);
+        toast({ variant: "success", title: "Product Created", description: "New product added to inventory." });
       }
       onSuccess();
       onClose();
-    } catch (error) {
-      console.error("Failed to save product", error);
+    } catch (error: any) {
+      console.error("[FRONTEND] API Save Error:", error.response?.data || error.message);
+      toast({ 
+        variant: "destructive", 
+        title: "Error", 
+        description: error.response?.data?.error || "Failed to save product. Check console." 
+      });
     } finally {
       setLoading(false);
     }
@@ -400,16 +437,34 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                       className="w-full sm:w-44"
                     />
                  </div>
-                 <div className="relative">
-                    <Upload className="absolute left-4 top-1/2 -translate-y-1/2 size-3.5 text-gray-500" />
-                    <Input 
-                      value={formData.image}
-                      onChange={e => setFormData({...formData, image: e.target.value})}
-                      placeholder="Paste Image URL or use Upload button"
-                      className="bg-white/5 border-white/10 h-11 rounded-xl text-white pl-12 text-xs"
-                      required
-                    />
-                 </div>
+                  {formData.image && (
+                     <div className="relative aspect-video w-full max-w-[200px] rounded-2xl bg-white/5 border border-white/10 overflow-hidden mb-4 group/preview">
+                        <NextImage 
+                          src={formData.image} 
+                          fill 
+                          className="object-cover group-hover/preview:scale-110 transition-transform duration-500" 
+                          alt="Main Preview" 
+                          unoptimized 
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, image: "" }))}
+                          className="absolute top-2 right-2 size-6 rounded-lg bg-red-500 text-white flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity"
+                        >
+                           <X className="size-3" />
+                        </button>
+                     </div>
+                  )}
+                  <div className="relative">
+                     <Upload className="absolute left-4 top-1/2 -translate-y-1/2 size-3.5 text-gray-500" />
+                      <Input 
+                        value={formData.image}
+                        onChange={e => setFormData({...formData, image: e.target.value})}
+                        placeholder="Paste Image URL or use Upload button"
+                        className="bg-white/5 border-white/10 h-11 rounded-xl text-white pl-12 text-xs"
+                        required
+                      />
+                  </div>
               </div>
 
               <div className="space-y-4">
@@ -438,30 +493,37 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                  
                  <div className="grid grid-cols-1 gap-3">
                     {formData.images.map((url, index) => (
-                      <div key={index} className="flex gap-3">
-                         <div className="relative flex-1 group min-w-0">
-                            <Input 
-                              value={url}
-                              onChange={e => handleImageUrlChange(index, e.target.value)}
-                              placeholder="Image URL"
-                              className="bg-white/5 border-white/10 h-12 rounded-xl text-white pl-4 pr-24 md:pr-32 text-[10px] md:text-xs"
-                            />
-                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                               {formData.image === url ? (
-                                 <span className="px-2 md:px-3 py-1 bg-primary text-white rounded-lg text-[7px] md:text-[8px] font-black uppercase tracking-widest leading-none">
-                                   Featured
-                                 </span>
-                               ) : (
-                                 <button 
-                                   type="button" 
-                                   onClick={() => setFeaturedImage(url)}
-                                   className="px-2 md:px-3 py-1 bg-white/5 text-gray-400 hover:text-white border border-white/10 rounded-lg text-[7px] md:text-[8px] font-black uppercase tracking-widest transition-all"
-                                 >
-                                    Set Main
-                                 </button>
-                               )}
-                            </div>
-                         </div>
+                       <div key={index} className="flex gap-3 items-center">
+                          <div className="relative size-14 rounded-xl bg-white/5 border border-white/10 overflow-hidden shrink-0 group/item">
+                             {url ? (
+                               <NextImage src={url} fill className="object-cover group-hover/item:scale-110 transition-transform" alt={`Gallery ${index}`} unoptimized />
+                             ) : (
+                               <ImageIcon className="size-5 text-gray-700 m-auto mt-4" />
+                             )}
+                          </div>
+                          <div className="relative flex-1 group min-w-0">
+                             <Input 
+                               value={url}
+                               onChange={e => handleImageUrlChange(index, e.target.value)}
+                               placeholder="Image URL"
+                               className="bg-white/5 border-white/10 h-12 rounded-xl text-white pl-4 pr-24 md:pr-32 text-[10px] md:text-xs"
+                             />
+                             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                {formData.image === url ? (
+                                  <span className="px-2 md:px-3 py-1 bg-primary text-white rounded-lg text-[7px] md:text-[8px] font-black uppercase tracking-widest leading-none">
+                                    Featured
+                                  </span>
+                                ) : (
+                                  <button 
+                                    type="button" 
+                                    onClick={() => setFeaturedImage(url)}
+                                    className="px-2 md:px-3 py-1 bg-white/5 text-gray-400 hover:text-white border border-white/10 rounded-lg text-[7px] md:text-[8px] font-black uppercase tracking-widest transition-all"
+                                  >
+                                     Set Main
+                                  </button>
+                                )}
+                             </div>
+                          </div>
                          <button 
                            type="button" 
                            onClick={() => handleRemoveImage(index)}

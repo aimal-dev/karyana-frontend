@@ -77,8 +77,8 @@ export default function SellerOrdersPage() {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-         <h1 className="text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">Order Management</h1>
-         <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Manage process and track your customer orders</p>
+         <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium text-white tracking-tighter uppercase font-subheading-main">Order Management</h1>
+         <p className="text-gray-400 font-medium uppercase tracking-[0.2em] text-[9px] md:text-[10px] mt-1 opacity-70">Manage process and track your customer orders</p>
       </div>
 
       {/* Filter Buttons */}
@@ -100,7 +100,7 @@ export default function SellerOrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white/5 border border-white/5 rounded-[2.5rem] overflow-hidden">
+      <div className="bg-white/5 border border-white/5 rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden">
          {filteredOrders?.length === 0 ? (
             <div className="py-20 text-center">
                <Package className="size-16 text-gray-700 mx-auto mb-4" />
@@ -113,23 +113,23 @@ export default function SellerOrdersPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                  <thead>
-                    <tr className="bg-white/5 border-b border-white/5">
-                       <th className="px-8 py-7 text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Order</th>
-                       <th className="px-8 py-7 text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Customer</th>
-                       <th className="px-8 py-7 text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Details</th>
-                       <th className="px-8 py-7 text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Revenue</th>
-                       <th className="px-8 py-7 text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Status Management</th>
-                       <th className="px-8 py-7 text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em] text-right pr-12">View</th>
-                    </tr>
+                     <tr className="bg-white/5 border-b border-white/5">
+                        <th className="px-4 md:px-8 py-4 md:py-7 text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Order</th>
+                        <th className="px-4 md:px-8 py-4 md:py-7 text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Customer</th>
+                        <th className="px-4 md:px-8 py-4 md:py-7 text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Details</th>
+                        <th className="px-4 md:px-8 py-4 md:py-7 text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Revenue</th>
+                        <th className="px-4 md:px-8 py-4 md:py-7 text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em]">Status Management</th>
+                        <th className="px-4 md:px-8 py-4 md:py-7 text-[9px] md:text-[10px] font-medium text-gray-500 uppercase tracking-[0.2em] text-right pr-6 md:pr-12">View</th>
+                     </tr>
                  </thead>
                  <tbody className="divide-y divide-white/5">
                     {filteredOrders?.map((order: Order) => (
-                      <tr key={order.id} className="hover:bg-white/[0.02] transition-colors group">
-                         <td className="px-8 py-6">
-                            <div className="flex items-center gap-4">
-                               <div className="size-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-medium text-sm shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
-                                  #{order.id}
-                               </div>
+                       <tr key={order.id} className="hover:bg-white/[0.02] transition-colors group">
+                          <td className="px-4 md:px-8 py-6">
+                             <div className="flex items-center gap-4">
+                                <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-medium text-xs md:text-sm shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                                   #{order.id}
+                                </div>
                                <div>
                                   <div className="text-xs font-medium text-white uppercase tracking-widest font-subheading-main">
                                      {new Date(order.createdAt).toLocaleDateString()}
@@ -185,14 +185,14 @@ export default function SellerOrdersPage() {
                                <option value="CANCELLED">CANCELLED</option>
                             </select>
                          </td>
-                         <td className="px-8 py-6 text-right pr-12">
-                            <button
-                              onClick={() => setViewingOrder(order)}
-                              className="size-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-gray-400 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 transition-all group-hover:scale-110"
-                            >
-                               <Eye className="size-4" />
-                            </button>
-                         </td>
+                          <td className="px-4 md:px-8 py-6 text-right pr-6 md:pr-12">
+                             <button
+                               onClick={() => setViewingOrder(order)}
+                               className="size-8 md:size-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-gray-400 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 transition-all group-hover:scale-110"
+                             >
+                                <Eye className="size-4" />
+                             </button>
+                          </td>
                       </tr>
                     ))}
                  </tbody>
@@ -203,41 +203,38 @@ export default function SellerOrdersPage() {
 
       {/* Order Details Modal */}
       {viewingOrder && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-10 animate-in fade-in duration-300">
-           <div className="bg-[#0A0A0B] border border-white/10 rounded-[3rem] max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300">
+           <div className="bg-[#0A0A0B] border border-white/10 rounded-[2rem] md:rounded-[3rem] max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
               {/* Modal Header */}
-              <div className="p-10 pb-4 flex items-center justify-between border-b border-white/5 bg-white/[0.02]">
-                 <div className="flex items-center gap-6">
-                    <div className="size-16 rounded-[2rem] bg-indigo-500 flex items-center justify-center text-white font-medium text-2xl shadow-2xl shadow-indigo-500/40">
+              <div className="p-6 md:p-10 pb-4 flex flex-col md:flex-row items-start md:items-center justify-between border-b border-white/5 bg-white/[0.02] gap-4">
+                 <div className="flex items-center gap-4 md:gap-6">
+                    <div className="size-12 md:size-16 rounded-2xl md:rounded-[2rem] bg-indigo-500 flex items-center justify-center text-white font-medium text-xl md:text-2xl shadow-2xl shadow-indigo-500/40">
                        #{viewingOrder.id}
                     </div>
                     <div>
-                       <h2 className="text-3xl font-medium text-white tracking-tight uppercase font-subheading-main">Order Details</h2>
+                       <h2 className="text-xl md:text-3xl font-medium text-white tracking-tight uppercase font-subheading-main">Order Details</h2>
                        <div className="flex items-center gap-3 mt-1.5">
                           <span className={cn(
-                            "px-3 py-1 rounded-full text-[10px] font-medium uppercase tracking-widest border",
+                            "px-2 md:px-3 py-1 rounded-full text-[9px] md:text-[10px] font-medium uppercase tracking-widest border",
                             statusColors[viewingOrder.status as keyof typeof statusColors]
                           )}>
                              {viewingOrder.status}
-                          </span>
-                          <span className="text-xs font-medium text-gray-500">
-                             {new Date(viewingOrder.createdAt).toLocaleString()}
                           </span>
                        </div>
                     </div>
                  </div>
                  <button 
                    onClick={() => setViewingOrder(null)}
-                   className="size-12 rounded-2xl bg-white/5 hover:bg-red-500/10 border border-white/5 hover:border-red-500/20 flex items-center justify-center text-gray-400 hover:text-red-500 transition-all"
+                   className="absolute top-6 right-6 md:relative md:top-0 md:right-0 size-10 md:size-12 rounded-2xl bg-white/5 hover:bg-red-500/10 border border-white/5 hover:border-red-500/20 flex items-center justify-center text-gray-400 hover:text-red-500 transition-all"
                  >
                     <X className="size-5" />
                  </button>
               </div>
 
               {/* Modal Body */}
-              <div className="p-10 space-y-10">
+              <div className="p-6 md:p-10 space-y-6 md:space-y-10">
                  
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
                     <div className="space-y-6">
                        <h4 className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-[0.2em] border-l-2 border-indigo-500 pl-4">
                           <User className="size-4" /> Customer Summary
@@ -297,14 +294,14 @@ export default function SellerOrdersPage() {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-8 border-t border-white/5 bg-white/[0.02] flex items-center justify-between">
+              <div className="p-6 md:p-8 border-t border-white/5 bg-white/[0.02] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                  <div className="flex flex-col">
-                    <span className="text-[10px] font-medium text-gray-600 uppercase tracking-widest">Total Transaction Value</span>
-                    <span className="text-3xl font-medium text-white">Rs {viewingOrder.total?.toLocaleString()}</span>
+                    <span className="text-[9px] md:text-[10px] font-medium text-gray-600 uppercase tracking-widest">Total Transaction Value</span>
+                    <span className="text-2xl md:text-3xl font-medium text-white">Rs {viewingOrder.total?.toLocaleString()}</span>
                  </div>
                  <button 
                    onClick={() => setViewingOrder(null)}
-                   className="px-8 h-14 rounded-2xl bg-indigo-500 text-white font-medium uppercase tracking-[0.15em] text-xs hover:bg-indigo-600 shadow-2xl shadow-indigo-500/30 transition-all hover:scale-105 active:scale-95"
+                   className="w-full md:w-auto px-8 h-12 md:h-14 rounded-2xl bg-indigo-500 text-white font-medium uppercase tracking-[0.15em] text-[10px] md:text-xs hover:bg-indigo-600 shadow-2xl shadow-indigo-500/30 transition-all hover:scale-105 active:scale-95"
                  >
                     Acknowledge Review
                  </button>

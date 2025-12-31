@@ -10,7 +10,8 @@ import {
   Trash2, 
   Loader2,
   Store,
-  Layers
+  Layers,
+  Star
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { CategoryModal } from "@/components/dashboard/CategoryModal";

@@ -42,7 +42,7 @@ const sidebarItems = [
   },
 ];
 
-export function DashboardSidebar() {
+export function DashboardSidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -54,30 +54,39 @@ export function DashboardSidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-100 min-h-[calc(100vh-5rem)] hidden lg:block">
+    <aside className="w-64 bg-white border-r border-gray-100 min-h-screen flex flex-col">
       <div className="flex flex-col h-full py-6">
-        <div className="px-6 mb-8">
-           <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Menu</h2>
-           <nav className="space-y-1">
-             {sidebarItems.map((item) => (
-               <Link
-                 key={item.href}
-                 href={item.href}
-                 className={cn(
-                   "flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl transition-all duration-200 group",
-                   pathname === item.href 
-                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" 
-                     : "text-gray-500 hover:bg-gray-50 hover:text-primary"
-                 )}
-               >
-                 <item.icon className={cn("size-5", pathname === item.href ? "text-primary-foreground" : "text-gray-400 group-hover:text-primary")} />
-                 {item.title}
-               </Link>
-             ))}
-           </nav>
+        <div className="flex items-center justify-between px-6 mb-8 lg:hidden">
+           <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest">Menu</h2>
+           <button onClick={onClose} className="p-2 -mr-2 text-gray-400 hover:text-gray-600">
+             <LayoutDashboard className="size-5" />
+           </button>
         </div>
 
-        <div className="mt-auto px-6">
+        <div className="px-6 mb-8 hidden lg:block">
+           <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Menu</h2>
+        </div>
+
+        <nav className="space-y-1 px-6">
+          {sidebarItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onClose}
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl transition-all duration-200 group",
+                pathname === item.href 
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" 
+                  : "text-gray-500 hover:bg-gray-50 hover:text-primary"
+              )}
+            >
+              <item.icon className={cn("size-5", pathname === item.href ? "text-primary-foreground" : "text-gray-400 group-hover:text-primary")} />
+              {item.title}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-auto px-6 pt-6">
            <button 
              onClick={handleLogout}
              className="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl text-red-500 hover:bg-red-50 w-full transition-all"

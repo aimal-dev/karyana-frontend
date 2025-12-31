@@ -50,7 +50,7 @@ export default function ComplaintsPage() {
        setFormData({ subject: "", message: "" });
        setShowForm(false);
     },
-    onError: (err: any) => {
+    onError: (err: { response?: { data?: { error?: string } } }) => {
        toast({ variant: "destructive", title: "Error", description: err.response?.data?.error || "Failed" });
     }
   });
@@ -74,12 +74,15 @@ export default function ComplaintsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
          <div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tight">Complaints</h1>
+            <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">Complaints</h1>
             <p className="text-gray-500 font-medium text-sm mt-1">Report issues or send feedback.</p>
          </div>
-         <Button onClick={() => setShowForm(!showForm)} className="rounded-xl gap-2 font-black">
+         <Button 
+           onClick={() => setShowForm(!showForm)} 
+           className="w-full sm:w-auto h-12 rounded-xl gap-2 font-black shadow-lg shadow-primary/20 active:scale-95 transition-all"
+         >
             {showForm ? "Cancel" : <><Plus className="size-4" /> New Complaint</>}
          </Button>
       </div>

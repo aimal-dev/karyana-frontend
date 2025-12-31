@@ -43,7 +43,7 @@ export default function CategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ["seller-categories-list"] });
       toast({ variant: "success", title: "Deleted", description: "Category removed" });
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { data?: { error?: string } } }) => {
       toast({ 
         variant: "destructive", 
         title: "Error", 
@@ -54,14 +54,15 @@ export default function CategoriesPage() {
 
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: number[]) => {
-      await api.post("/category/delete-many", { ids });
+      const res = await api.post("/category/delete-many", { ids });
+      return res.data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data: { count?: number }) => {
       queryClient.invalidateQueries({ queryKey: ["seller-categories-list"] });
       toast({ variant: "success", title: "Deleted", description: `${data?.count || 'Selected'} categories removed.` });
       setSelectedIds([]);
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { data?: { error?: string } } }) => {
       toast({ 
         variant: "destructive", 
         title: "Error", 
@@ -92,22 +93,22 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
          <div>
-            <h1 className="text-4xl font-black text-white tracking-tight leading-none uppercase font-subheading-main">Categories</h1>
-            <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px] mt-1 opacity-70">Organize your products into logical groups</p>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tight leading-none uppercase font-subheading-main">Categories</h1>
+            <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[9px] md:text-[10px] mt-1 opacity-70">Organize your products into logical groups</p>
          </div>
          <Button 
-           onClick={handleCreate}
-           className="h-14 px-8 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-3"
+            onClick={handleCreate}
+            className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 rounded-xl md:rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all gap-3 text-xs"
          >
-            <Plus className="size-5" />
+            <Plus className="size-4 md:size-5" />
             New Category
          </Button>
       </div>
 
       {/* Bulk Operations */}
-      <div className="flex justify-end -mt-6 gap-3">
+      <div className="flex flex-wrap items-center justify-end -mt-2 sm:-mt-6 gap-2 md:gap-3">
         {selectedIds.length > 0 && (
            <button 
              onClick={() => {
@@ -116,9 +117,9 @@ export default function CategoriesPage() {
                 }
              }}
              disabled={bulkDeleteMutation.isPending}
-             className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 animate-in fade-in zoom-in"
+             className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-[9px] md:text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 animate-in fade-in zoom-in"
            >
-              {bulkDeleteMutation.isPending ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
+              {bulkDeleteMutation.isPending ? <Loader2 className="size-3 animate-spin" /> : <Trash2 className="size-3" />}
               Delete ({selectedIds.length})
            </button>
         )}
@@ -130,7 +131,7 @@ export default function CategoriesPage() {
                 setSelectedIds(categories.map((c: { id: number }) => c.id));
              }
           }}
-          className="px-4 py-2 bg-white/5 border border-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all"
+          className="px-4 py-2 bg-white/5 border border-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl font-bold text-[9px] md:text-[10px] uppercase tracking-widest transition-all"
         >
            {selectedIds.length === categories.length ? "Deselect All" : "Select All"}
         </button>

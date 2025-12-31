@@ -79,7 +79,7 @@ export default function ProfilePage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
        <div className="grid md:grid-cols-2 gap-8">
           <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm h-fit">
-              <h2 className="text-xl font-black mb-6 text-gray-900">Personal Information</h2>
+              <h2 className="text-xl font-medium mb-6 text-gray-900">Personal Information</h2>
               <div className="space-y-4">
                  <div>
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Full Name</label>
@@ -93,7 +93,7 @@ export default function ProfilePage() {
           </div>
 
            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-              <h2 className="text-xl font-black mb-6 text-gray-900">Shipping Details</h2>
+              <h2 className="text-xl font-medium mb-6 text-gray-900">Shipping Details</h2>
               <form onSubmit={handleProfileUpdate} className="space-y-4">
                  <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Address</label>
@@ -133,7 +133,7 @@ export default function ProfilePage() {
        </div>
 
        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm max-w-2xl">
-          <h2 className="text-xl font-black mb-6 text-gray-900">Security (Change Password)</h2>
+          <h2 className="text-xl font-medium mb-6 text-gray-900">Security (Change Password)</h2>
           <form onSubmit={handlePasswordChange} className="space-y-4">
              <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Current Password</label>
