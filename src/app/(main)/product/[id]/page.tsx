@@ -29,7 +29,7 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
   const [activeTab, setActiveTab] = useState<"description" | "reviews" | "shipping">("description");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
-  const [selectedVariant, setSelectedVariant] = useState<{ id: number; name: string; price: number; stock: number } | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<{ id: number; name: string; price: number; stock: number; image?: string | null } | null>(null);
   const addToCart = useCartStore((state) => state.addToCart);
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -42,8 +42,12 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
     }
   });
 
-  const allImages = product ? [product.image, ...(product.images?.map((img: {url: string}) => img.url) || [])].filter(Boolean) : [];
-  const displayImage = previewImage || product?.image || "/placeholder.png";
+  const allImages = product ? [
+    product.image, 
+    ...(product.images?.map((img: {url: string}) => img.url) || []),
+    ...(product.variants?.map((v: {image?: string}) => v.image).filter(Boolean) || [])
+  ].filter(Boolean) : [];
+  const displayImage = previewImage || selectedVariant?.image || product?.image || "/placeholder.png";
 
   // Fetch reviews for this product
   const { data: reviewsData } = useQuery({
@@ -185,7 +189,12 @@ export default function ProductSinglePage({ params }: { params: Promise<{ id: st
                         {product.variants.map((variant: any) => (
                             <button
                                 key={variant.id}
-                                onClick={() => setSelectedVariant(variant)}
+                                onClick={() => {
+                                    setSelectedVariant(variant);
+                                    if (variant.image) {
+                                        setPreviewImage(variant.image);
+                                    }
+                                }}
                                 className={cn(
                                     "px-4 py-2 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all",
                                     selectedVariant?.id === variant.id 
