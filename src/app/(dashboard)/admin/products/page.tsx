@@ -91,6 +91,7 @@ export default function AdminProductsPage() {
     seller: { id: number; name: string };
     category?: { name: string };
     images?: { url: string }[];
+    variants?: { name: string; price: number; stock: number }[];
   }
 
   const [isModalOpen, setIsModalOpen] = useState(false);

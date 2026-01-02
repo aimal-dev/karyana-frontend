@@ -29,6 +29,7 @@ export default function SellerProductsPage() {
     stock: number;
     categoryId: number;
     image: string;
+    variants?: { name: string; price: number; stock: number }[];
   } | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const { toast } = useToast();
@@ -92,6 +93,7 @@ export default function SellerProductsPage() {
     isOnSale?: boolean;
     oldPrice?: number;
     images?: { url: string }[];
+    variants?: { name: string; price: number; stock: number }[];
   }) => {
     setSelectedProduct(product);
     setIsModalOpen(true);

@@ -341,91 +341,93 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
               )}
            </div>
 
-           <div className="space-y-4 pt-4 border-t border-white/5 text-left">
-              <div className="flex items-center justify-between">
-                 <label className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] ml-1">Product Variants (Optional)</label>
-                 <button type="button" onClick={() => setFormData(prev => ({ ...prev, variants: [...prev.variants, { name: "", price: "", stock: "" }] }))} className="px-3 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 text-[9px] font-black uppercase tracking-widest hover:bg-indigo-500 hover:text-white transition-all">
-                    + Add Variant
-                 </button>
-              </div>
-              
-              {formData.variants.length > 0 ? (
-                 <div className="space-y-3">
-                    {formData.variants.map((variant, index) => (
-                       <div key={index} className="flex gap-3 items-start animate-in fade-in slide-in-from-top-2">
-                          <Input 
-                            value={variant.name}
-                            onChange={e => {
-                               const newV = [...formData.variants];
-                               newV[index].name = e.target.value;
-                               setFormData({ ...formData, variants: newV });
-                            }}
-                            placeholder="Size/Type (e.g. Small)"
-                            className="flex-[2] bg-white/5 border-white/10 h-10 rounded-xl text-white text-xs"
-                          />
-                          <Input 
-                            type="number"
-                            value={variant.price}
-                            onChange={e => {
-                               const newV = [...formData.variants];
-                               newV[index].price = e.target.value;
-                               setFormData({ ...formData, variants: newV });
-                            }}
-                            placeholder="Price"
-                            className="flex-1 bg-white/5 border-white/10 h-10 rounded-xl text-white text-xs"
-                          />
-                          <Input 
-                            type="number"
-                            value={variant.stock}
-                            onChange={e => {
-                               const newV = [...formData.variants];
-                               newV[index].stock = e.target.value;
-                               setFormData({ ...formData, variants: newV });
-                            }}
-                            placeholder="Stock"
-                            className="flex-1 bg-white/5 border-white/10 h-10 rounded-xl text-white text-xs"
-                          />
-                          <button 
-                            type="button" 
-                            onClick={() => {
-                               const newV = formData.variants.filter((_, i) => i !== index);
-                               setFormData({ ...formData, variants: newV });
-                            }}
-                            className="size-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center hover:bg-red-500 text-red-500 hover:text-white transition-all shrink-0"
-                          >
-                             <X className="size-3.5" />
-                          </button>
-                       </div>
-                    ))}
-                    <p className="text-[9px] text-gray-500 font-medium ml-1">* Variants will override base price/stock for selection.</p>
-                 </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
-                   <div className="space-y-2 text-left">
-                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Price ($)</label>
-                      <Input 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6 pt-4 border-t border-white/5">
+                <div className="space-y-2 text-left">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Base Price ($)</label>
+                    <Input 
                         type="number"
                         value={formData.price}
                         onChange={e => setFormData({...formData, price: e.target.value})}
                         placeholder="0.00"
                         className="bg-white/5 border-white/10 h-12 rounded-xl text-white"
                         required
-                      />
-                   </div>
-                   <div className="space-y-2 text-left">
-                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Stock Quantity</label>
-                      <Input 
+                    />
+                    <p className="text-[9px] text-gray-600 ml-1">The default price shown in the store.</p>
+                </div>
+                <div className="space-y-2 text-left">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Total Stock Quantity</label>
+                    <Input 
                         type="number"
                         value={formData.stock}
                         onChange={e => setFormData({...formData, stock: e.target.value})}
                         placeholder="0"
                         className="bg-white/5 border-white/10 h-12 rounded-xl text-white"
                         required
-                      />
-                   </div>
+                    />
+                    <p className="text-[9px] text-gray-600 ml-1">Overall inventory count for this product.</p>
                 </div>
-              )}
-           </div>
+            </div>
+
+            <div className="space-y-4 pt-4 border-t border-white/5 text-left font-subheading">
+               <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] ml-1">Product Variants (Optional)</label>
+                  <button type="button" onClick={() => setFormData(prev => ({ ...prev, variants: [...prev.variants, { name: "", price: "", stock: "" }] }))} className="px-3 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 text-[9px] font-black uppercase tracking-widest hover:bg-indigo-500 hover:text-white transition-all">
+                     + Add Variant
+                  </button>
+               </div>
+               
+               {formData.variants.length > 0 && (
+                  <div className="space-y-3">
+                     {formData.variants.map((variant, index) => (
+                        <div key={index} className="flex gap-3 items-start animate-in fade-in slide-in-from-top-2">
+                           <Input 
+                             value={variant.name}
+                             onChange={e => {
+                                const newV = [...formData.variants];
+                                newV[index].name = e.target.value;
+                                setFormData({ ...formData, variants: newV });
+                             }}
+                             placeholder="Size/Type (e.g. Small)"
+                             className="flex-[2] bg-white/5 border-white/10 h-10 rounded-xl text-white text-xs"
+                           />
+                           <Input 
+                             type="number"
+                             value={variant.price}
+                             onChange={e => {
+                                const newV = [...formData.variants];
+                                newV[index].price = e.target.value;
+                                setFormData({ ...formData, variants: newV });
+                             }}
+                             placeholder="Price"
+                             className="flex-1 bg-white/5 border-white/10 h-10 rounded-xl text-white text-xs"
+                           />
+                           <Input 
+                             type="number"
+                             value={variant.stock}
+                             onChange={e => {
+                                const newV = [...formData.variants];
+                                newV[index].stock = e.target.value;
+                                setFormData({ ...formData, variants: newV });
+                             }}
+                             placeholder="Stock"
+                             className="flex-1 bg-white/5 border-white/10 h-10 rounded-xl text-white text-xs"
+                           />
+                           <button 
+                             type="button" 
+                             onClick={() => {
+                                const newV = formData.variants.filter((_, i) => i !== index);
+                                setFormData({ ...formData, variants: newV });
+                             }}
+                             className="size-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center hover:bg-red-500 text-red-500 hover:text-white transition-all shrink-0"
+                           >
+                              <X className="size-3.5" />
+                           </button>
+                        </div>
+                     ))}
+                     <p className="text-[9px] text-gray-500 font-medium ml-1">* Variant price and stock will be used when selected by the customer.</p>
+                  </div>
+               )}
+            </div>
 
            <div className="space-y-6 pt-4 border-t border-white/5 text-left">
               <div className="space-y-4">
