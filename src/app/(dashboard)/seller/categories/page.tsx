@@ -145,7 +145,7 @@ export default function CategoriesPage() {
          {categories.length === 0 ? (
            <div className="col-span-full py-20 text-center bg-white/5 rounded-[2.5rem] border border-white/5 border-dashed">
               <FolderOpen className="size-12 text-gray-700 mx-auto mb-4" />
-              <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">No categories found</p>
+              <p className="text-sm font-medium text-gray-500 uppercase tracking-widest">No categories found</p>
            </div>
          ) : (
            categories.map((cat: { id: number; name: string; image: string | null }) => (

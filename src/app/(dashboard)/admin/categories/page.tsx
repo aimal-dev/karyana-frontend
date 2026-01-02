@@ -225,7 +225,7 @@ export default function AdminCategoriesPage() {
       {categories.length === 0 && (
         <div className="h-[40vh] border-2 border-dashed border-white/5 rounded-[3rem] flex flex-col items-center justify-center text-center p-10">
            <Layers className="size-16 text-gray-800 mb-4" />
-           <h2 className="text-xl font-black text-white uppercase tracking-tight">No Categories Found</h2>
+           <h2 className="text-xl font-medium text-white uppercase tracking-tight">No Categories Found</h2>
            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-2">Get started by creating your first global category</p>
         </div>
       )}
