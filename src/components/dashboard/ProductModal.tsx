@@ -28,7 +28,7 @@ interface ProductModalProps {
     isOnSale?: boolean;
     oldPrice?: number;
     sellerId?: number;
-    variants?: { name: string; price: number; stock: number; image?: string }[];
+    variants?: { name: string; price: number; stock: number }[];
     images?: { url: string }[];
     tags?: string[];
   } | null;
@@ -51,7 +51,7 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
     oldPrice: "",
     tags: "",
     sellerId: "",
-    variants: [] as { name: string; price: string; stock: string; image: string }[]
+    variants: [] as { name: string; price: string; stock: string }[]
   });
 
   const { data: user } = useUser();
@@ -93,11 +93,10 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
         oldPrice: product.oldPrice?.toString() || "",
         tags: product.tags ? product.tags.join(", ") : "",
         sellerId: product.sellerId?.toString() || "",
-        variants: product.variants?.map((v: { name: string; price: number | string; stock: number | string; image?: string }) => ({ 
+        variants: product.variants?.map((v: { name: string; price: number | string; stock: number | string }) => ({ 
           name: v.name, 
           price: v.price.toString(), 
-          stock: v.stock.toString(),
-          image: v.image || ""
+          stock: v.stock.toString()
         })) || []
       });
     } else {
@@ -413,27 +412,7 @@ export function ProductModal({ isOpen, onClose, product, onSuccess }: ProductMod
                              placeholder="Stock"
                              className="flex-1 bg-white/5 border-white/10 h-10 rounded-xl text-white text-xs"
                            />
-                           <div className="flex-[2] flex gap-2">
-                              <Input 
-                                value={variant.image}
-                                onChange={e => {
-                                   const newV = [...formData.variants];
-                                   newV[index].image = e.target.value;
-                                   setFormData({ ...formData, variants: newV });
-                                }}
-                                placeholder="Image URL"
-                                className="bg-white/5 border-white/10 h-10 rounded-xl text-white text-[10px]"
-                              />
-                              <ImageUpload 
-                                label="" 
-                                onUploadSuccess={(url) => {
-                                   const newV = [...formData.variants];
-                                   newV[index].image = url;
-                                   setFormData({ ...formData, variants: newV });
-                                }} 
-                                className="w-10 h-10 shrink-0"
-                              />
-                           </div>
+
                            <button 
                              type="button" 
                              onClick={() => {
